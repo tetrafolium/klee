@@ -2,16 +2,16 @@ inspecode:
 
   cpplint:
   - ignore: [ 'test/', 'unittest/' ]
-    thresholds: { num-issues: 999 }
-  - ignore: [ 'test/', 'unittest/' ]
     options:
       --filter: -,+build
     thresholds: { num-issues: 999 }
   - ignore: [ 'test/', 'unittest/' ]
     options:
-      --filter: -,+runtime
+      --filter:
+      - -
+      - +runtime
     thresholds: { num-issues: 999 }
   - ignore: [ 'test/', 'unittest/' ]
     options:
-      --filter: -,+legal,+readability
+      --filter: [ -, +legal, +readability ]
     thresholds: { num-issues: 999 }
