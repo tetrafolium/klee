@@ -243,7 +243,7 @@ Solver *createCexCachingSolver(Solver *s);
 
 /// createFastCexSolver - Create a "fast counterexample solver", which tries
 /// to quickly compute a satisfying assignment for a constraint set using
-/// value propogation and range analysis.
+/// value propagation and range analysis.
 ///
 /// \param s - The underlying solver to use.
 Solver *createFastCexSolver(Solver *s);

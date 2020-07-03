@@ -83,7 +83,7 @@ ExprBuilder *createDefaultExprBuilder();
 /// Base - The base builder to use when constructing expressions.
 ExprBuilder *createConstantFoldingExprBuilder(ExprBuilder *Base);
 
-/// createSimplifyingExprBuilder - Create an expression builder which attemps
+/// createSimplifyingExprBuilder - Create an expression builder which attempts
 /// to fold redundant expressions and normalize expressions for improved
 /// caching.
 ///
