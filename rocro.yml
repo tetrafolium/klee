@@ -8,10 +8,10 @@ inspecode:
   - ignore: [ 'test/', 'unittest/' ]
     options:
       --filter:
-      - -
-      - +runtime
+      - '-'
+      - '+runtime'
     thresholds: { num-issues: 999 }
   - ignore: [ 'test/', 'unittest/' ]
     options:
-      --filter: [ -, +legal, +readability ]
+      --filter: [ '-', '+legal', '+readability' ]
     thresholds: { num-issues: 999 }
