@@ -32,7 +32,7 @@ namespace klee {
 /// entry function will be solved.
 /// @return final module or null in this case errorMsg is set
 std::unique_ptr<llvm::Module>
-linkModules(std::vector<std::unique_ptr<llvm::Module>> &modules,
+linkModules(std::vector<std::unique_ptr<llvm::Module> > &modules,
             llvm::StringRef entryFunction, std::string &errorMsg);
 
 /// Return the Function* target of a Call or Invoke instruction, or
@@ -63,7 +63,7 @@ bool functionEscapes(const llvm::Function *f);
 /// loaded
 /// @return true if successful otherwise false
 bool loadFile(const std::string &libraryName, llvm::LLVMContext &context,
-              std::vector<std::unique_ptr<llvm::Module>> &modules,
+              std::vector<std::unique_ptr<llvm::Module> > &modules,
               std::string &errorMsg);
 } // namespace klee
 

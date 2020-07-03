@@ -17,24 +17,24 @@ extern "C" {
 
 typedef struct KTestObject KTestObject;
 struct KTestObject {
-  char *name;
-  unsigned numBytes;
-  unsigned char *bytes;
+	char *name;
+	unsigned numBytes;
+	unsigned char *bytes;
 };
 
 typedef struct KTest KTest;
 struct KTest {
-  /* file format version */
-  unsigned version;
+	/* file format version */
+	unsigned version;
 
-  unsigned numArgs;
-  char **args;
+	unsigned numArgs;
+	char **args;
 
-  unsigned symArgvs;
-  unsigned symArgvLen;
+	unsigned symArgvs;
+	unsigned symArgvLen;
 
-  unsigned numObjects;
-  KTestObject *objects;
+	unsigned numObjects;
+	KTestObject *objects;
 };
 
 /* returns the current .ktest file format version */

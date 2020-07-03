@@ -24,66 +24,68 @@ using namespace klee;
 CallPathNode::CallPathNode(CallPathNode *_parent,
                            const llvm::Instruction *_callSite,
                            const llvm::Function *_function)
-    : parent(_parent), callSite(_callSite), function(_function), count(0) {}
+	: parent(_parent), callSite(_callSite), function(_function), count(0) {
+}
 
 void CallPathNode::print() {
-  llvm::errs() << "  (Function: " << this->function->getName() << ", "
-               << "Callsite: " << callSite << ", "
-               << "Count: " << this->count << ")";
-  if (parent && parent->callSite) {
-    llvm::errs() << ";\n";
-    parent->print();
-  } else
-    llvm::errs() << "\n";
+	llvm::errs() << "  (Function: " << this->function->getName() << ", "
+	             << "Callsite: " << callSite << ", "
+	             << "Count: " << this->count << ")";
+	if (parent && parent->callSite) {
+		llvm::errs() << ";\n";
+		parent->print();
+	} else
+		llvm::errs() << "\n";
 }
 
 ///
 
-CallPathManager::CallPathManager() : root(nullptr, nullptr, nullptr) {}
+CallPathManager::CallPathManager() : root(nullptr, nullptr, nullptr) {
+}
 
 void CallPathManager::getSummaryStatistics(CallSiteSummaryTable &results) {
-  results.clear();
+	results.clear();
 
-  for (auto &path : paths)
-    path->summaryStatistics = path->statistics;
+	for (auto &path : paths)
+		path->summaryStatistics = path->statistics;
 
-  // compute summary bottom up, while building result table
-  for (auto it = paths.rbegin(), ie = paths.rend(); it != ie; ++it) {
-    const auto &cp = (*it);
-    cp->parent->summaryStatistics += cp->summaryStatistics;
+	// compute summary bottom up, while building result table
+	for (auto it = paths.rbegin(), ie = paths.rend(); it != ie; ++it) {
+		const auto &cp = (*it);
+		cp->parent->summaryStatistics += cp->summaryStatistics;
 
-    CallSiteInfo &csi = results[cp->callSite][cp->function];
-    csi.count += cp->count;
-    csi.statistics += cp->summaryStatistics;
-  }
+		CallSiteInfo &csi = results[cp->callSite][cp->function];
+		csi.count += cp->count;
+		csi.statistics += cp->summaryStatistics;
+	}
 }
 
 CallPathNode *CallPathManager::computeCallPath(CallPathNode *parent,
                                                const llvm::Instruction *cs,
                                                const llvm::Function *f) {
-  for (CallPathNode *p = parent; p; p = p->parent)
-    if (cs == p->callSite && f == p->function)
-      return p;
+	for (CallPathNode *p = parent; p; p = p->parent)
+		if (cs == p->callSite && f == p->function)
+			return p;
 
-  auto cp = std::unique_ptr<CallPathNode>(new CallPathNode(parent, cs, f));
-  auto newCP = cp.get();
-  paths.emplace_back(std::move(cp));
-  return newCP;
+	auto cp = std::unique_ptr<CallPathNode>(new CallPathNode(parent, cs, f));
+	auto newCP = cp.get();
+	paths.emplace_back(std::move(cp));
+	return newCP;
 }
 
 CallPathNode *CallPathManager::getCallPath(CallPathNode *parent,
                                            const llvm::Instruction *cs,
                                            const llvm::Function *f) {
-  std::pair<const llvm::Instruction *, const llvm::Function *> key(cs, f);
-  if (!parent)
-    parent = &root;
+	std::pair<const llvm::Instruction *, const llvm::Function *> key(cs, f);
+	if (!parent)
+		parent = &root;
 
-  auto it = parent->children.find(key);
-  if (it == parent->children.end()) {
-    auto cp = computeCallPath(parent, cs, f);
-    parent->children.insert(std::make_pair(key, cp));
-    return cp;
-  } else {
-    return it->second;
-  }
+	auto it = parent->children.find(key);
+	if (it == parent->children.end()) {
+		auto cp = computeCallPath(parent, cs, f);
+		parent->children.insert(std::make_pair(key, cp));
+		return cp;
+	} else {
+		return it->second;
+	}
 }

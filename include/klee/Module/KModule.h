@@ -40,111 +40,113 @@ class KModule;
 template <class T> class ref;
 
 struct KFunction {
-  llvm::Function *function;
+	llvm::Function *function;
 
-  unsigned numArgs, numRegisters;
+	unsigned numArgs, numRegisters;
 
-  unsigned numInstructions;
-  KInstruction **instructions;
+	unsigned numInstructions;
+	KInstruction **instructions;
 
-  std::map<llvm::BasicBlock *, unsigned> basicBlockEntry;
+	std::map<llvm::BasicBlock *, unsigned> basicBlockEntry;
 
-  /// Whether instructions in this function should count as
-  /// "coverable" for statistics and search heuristics.
-  bool trackCoverage;
+	/// Whether instructions in this function should count as
+	/// "coverable" for statistics and search heuristics.
+	bool trackCoverage;
 
 public:
-  explicit KFunction(llvm::Function *, KModule *);
-  KFunction(const KFunction &) = delete;
-  KFunction &operator=(const KFunction &) = delete;
+	explicit KFunction(llvm::Function *, KModule *);
+	KFunction(const KFunction &) = delete;
+	KFunction &operator=(const KFunction &) = delete;
 
-  ~KFunction();
+	~KFunction();
 
-  unsigned getArgRegister(unsigned index) { return index; }
+	unsigned getArgRegister(unsigned index) {
+		return index;
+	}
 };
 
 class KConstant {
 public:
-  /// Actual LLVM constant this represents.
-  llvm::Constant *ct;
+/// Actual LLVM constant this represents.
+llvm::Constant *ct;
 
-  /// The constant ID.
-  unsigned id;
+/// The constant ID.
+unsigned id;
 
-  /// First instruction where this constant was encountered, or NULL
-  /// if not applicable/unavailable.
-  KInstruction *ki;
+/// First instruction where this constant was encountered, or NULL
+/// if not applicable/unavailable.
+KInstruction *ki;
 
-  KConstant(llvm::Constant *, unsigned, KInstruction *);
+KConstant(llvm::Constant *, unsigned, KInstruction *);
 };
 
 class KModule {
 public:
-  std::unique_ptr<llvm::Module> module;
-  std::unique_ptr<llvm::DataLayout> targetData;
+std::unique_ptr<llvm::Module> module;
+std::unique_ptr<llvm::DataLayout> targetData;
 
-  // Our shadow versions of LLVM structures.
-  std::vector<std::unique_ptr<KFunction>> functions;
-  std::map<llvm::Function *, KFunction *> functionMap;
+// Our shadow versions of LLVM structures.
+std::vector<std::unique_ptr<KFunction> > functions;
+std::map<llvm::Function *, KFunction *> functionMap;
 
-  // Functions which escape (may be called indirectly)
-  // XXX change to KFunction
-  std::set<llvm::Function *> escapingFunctions;
+// Functions which escape (may be called indirectly)
+// XXX change to KFunction
+std::set<llvm::Function *> escapingFunctions;
 
-  std::unique_ptr<InstructionInfoTable> infos;
+std::unique_ptr<InstructionInfoTable> infos;
 
-  std::vector<llvm::Constant *> constants;
-  std::map<const llvm::Constant *, std::unique_ptr<KConstant>> constantMap;
-  KConstant *getKConstant(const llvm::Constant *c);
+std::vector<llvm::Constant *> constants;
+std::map<const llvm::Constant *, std::unique_ptr<KConstant> > constantMap;
+KConstant *getKConstant(const llvm::Constant *c);
 
-  std::unique_ptr<Cell[]> constantTable;
+std::unique_ptr<Cell[]> constantTable;
 
-  // Functions which are part of KLEE runtime
-  std::set<const llvm::Function *> internalFunctions;
+// Functions which are part of KLEE runtime
+std::set<const llvm::Function *> internalFunctions;
 
 private:
-  // Mark function with functionName as part of the KLEE runtime
-  void addInternalFunction(const char *functionName);
+// Mark function with functionName as part of the KLEE runtime
+void addInternalFunction(const char *functionName);
 
 public:
-  KModule() = default;
+KModule() = default;
 
-  /// Optimise and prepare module such that KLEE can execute it
-  //
-  void optimiseAndPrepare(const Interpreter::ModuleOptions &opts,
-                          llvm::ArrayRef<const char *>);
+/// Optimise and prepare module such that KLEE can execute it
+//
+void optimiseAndPrepare(const Interpreter::ModuleOptions &opts,
+                        llvm::ArrayRef<const char *>);
 
-  /// Manifest the generated module (e.g. assembly.ll, output.bc) and
-  /// prepares KModule
-  ///
-  /// @param ih
-  /// @param forceSourceOutput true if assembly.ll should be created
-  ///
-  // FIXME: ihandler should not be here
-  void manifest(InterpreterHandler *ih, bool forceSourceOutput);
+/// Manifest the generated module (e.g. assembly.ll, output.bc) and
+/// prepares KModule
+///
+/// @param ih
+/// @param forceSourceOutput true if assembly.ll should be created
+///
+// FIXME: ihandler should not be here
+void manifest(InterpreterHandler *ih, bool forceSourceOutput);
 
-  /// Link the provided modules together as one KLEE module.
-  ///
-  /// If the entry point is empty, all modules are linked together.
-  /// If the entry point is not empty, all modules are linked which resolve
-  /// the dependencies of the module containing entryPoint
-  ///
-  /// @param modules list of modules to be linked together
-  /// @param entryPoint name of the function which acts as the program's entry
-  /// point
-  /// @return true if at least one module has been linked in, false if nothing
-  /// changed
-  bool link(std::vector<std::unique_ptr<llvm::Module>> &modules,
-            const std::string &entryPoint);
+/// Link the provided modules together as one KLEE module.
+///
+/// If the entry point is empty, all modules are linked together.
+/// If the entry point is not empty, all modules are linked which resolve
+/// the dependencies of the module containing entryPoint
+///
+/// @param modules list of modules to be linked together
+/// @param entryPoint name of the function which acts as the program's entry
+/// point
+/// @return true if at least one module has been linked in, false if nothing
+/// changed
+bool link(std::vector<std::unique_ptr<llvm::Module> > &modules,
+          const std::string &entryPoint);
 
-  void instrument(const Interpreter::ModuleOptions &opts);
+void instrument(const Interpreter::ModuleOptions &opts);
 
-  /// Return an id for the given constant, creating a new one if necessary.
-  unsigned getConstantID(llvm::Constant *c, KInstruction *ki);
+/// Return an id for the given constant, creating a new one if necessary.
+unsigned getConstantID(llvm::Constant *c, KInstruction *ki);
 
-  /// Run passes that check if module is valid LLVM IR and if invariants
-  /// expected by KLEE's Executor hold.
-  void checkModule();
+/// Run passes that check if module is valid LLVM IR and if invariants
+/// expected by KLEE's Executor hold.
+void checkModule();
 };
 } // namespace klee
 

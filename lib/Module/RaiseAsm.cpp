@@ -36,85 +36,85 @@ char RaiseAsmPass::ID = 0;
 
 Function *RaiseAsmPass::getIntrinsic(llvm::Module &M, unsigned IID, Type **Tys,
                                      unsigned NumTys) {
-  return Intrinsic::getDeclaration(&M, (llvm::Intrinsic::ID)IID,
-                                   llvm::ArrayRef<llvm::Type *>(Tys, NumTys));
+	return Intrinsic::getDeclaration(&M, (llvm::Intrinsic::ID)IID,
+	                                 llvm::ArrayRef<llvm::Type *>(Tys, NumTys));
 }
 
 // FIXME: This should just be implemented as a patch to
 // X86TargetAsmInfo.cpp, then everyone will benefit.
 bool RaiseAsmPass::runOnInstruction(Module &M, Instruction *I) {
-  // We can just raise inline assembler using calls
-  CallInst *ci = dyn_cast<CallInst>(I);
-  if (!ci)
-    return false;
+	// We can just raise inline assembler using calls
+	CallInst *ci = dyn_cast<CallInst>(I);
+	if (!ci)
+		return false;
 
-  InlineAsm *ia = dyn_cast<InlineAsm>(ci->getCalledValue());
-  if (!ia)
-    return false;
+	InlineAsm *ia = dyn_cast<InlineAsm>(ci->getCalledValue());
+	if (!ia)
+		return false;
 
-  // Try to use existing infrastructure
-  if (!TLI)
-    return false;
+	// Try to use existing infrastructure
+	if (!TLI)
+		return false;
 
-  if (TLI->ExpandInlineAsm(ci))
-    return true;
+	if (TLI->ExpandInlineAsm(ci))
+		return true;
 
-  if (triple.getArch() == llvm::Triple::x86_64 &&
-      (triple.getOS() == llvm::Triple::Linux ||
-       triple.getOS() == llvm::Triple::Darwin ||
-       triple.getOS() == llvm::Triple::FreeBSD)) {
+	if (triple.getArch() == llvm::Triple::x86_64 &&
+	    (triple.getOS() == llvm::Triple::Linux ||
+	     triple.getOS() == llvm::Triple::Darwin ||
+	     triple.getOS() == llvm::Triple::FreeBSD)) {
 
-    if (ia->getAsmString() == "" && ia->hasSideEffects() &&
-        ia->getFunctionType()->getReturnType()->isVoidTy()) {
-      IRBuilder<> Builder(I);
+		if (ia->getAsmString() == "" && ia->hasSideEffects() &&
+		    ia->getFunctionType()->getReturnType()->isVoidTy()) {
+			IRBuilder<> Builder(I);
 #if LLVM_VERSION_CODE >= LLVM_VERSION(3, 9)
-      Builder.CreateFence(llvm::AtomicOrdering::SequentiallyConsistent);
+			Builder.CreateFence(llvm::AtomicOrdering::SequentiallyConsistent);
 #else
-      Builder.CreateFence(llvm::SequentiallyConsistent);
+			Builder.CreateFence(llvm::SequentiallyConsistent);
 #endif
-      I->eraseFromParent();
-      return true;
-    }
-  }
+			I->eraseFromParent();
+			return true;
+		}
+	}
 
-  return false;
+	return false;
 }
 
 bool RaiseAsmPass::runOnModule(Module &M) {
-  bool changed = false;
+	bool changed = false;
 
-  std::string Err;
-  std::string HostTriple = llvm::sys::getDefaultTargetTriple();
-  const Target *NativeTarget = TargetRegistry::lookupTarget(HostTriple, Err);
+	std::string Err;
+	std::string HostTriple = llvm::sys::getDefaultTargetTriple();
+	const Target *NativeTarget = TargetRegistry::lookupTarget(HostTriple, Err);
 
-  TargetMachine *TM = 0;
-  if (NativeTarget == 0) {
-    klee_warning("Warning: unable to select native target: %s", Err.c_str());
-    TLI = 0;
-  } else {
+	TargetMachine *TM = 0;
+	if (NativeTarget == 0) {
+		klee_warning("Warning: unable to select native target: %s", Err.c_str());
+		TLI = 0;
+	} else {
 #if LLVM_VERSION_CODE >= LLVM_VERSION(3, 9)
-    TM = NativeTarget->createTargetMachine(HostTriple, "", "", TargetOptions(),
-                                           None);
-    TLI = TM->getSubtargetImpl(*(M.begin()))->getTargetLowering();
+		TM = NativeTarget->createTargetMachine(HostTriple, "", "", TargetOptions(),
+		                                       None);
+		TLI = TM->getSubtargetImpl(*(M.begin()))->getTargetLowering();
 #else
-    TM = NativeTarget->createTargetMachine(HostTriple, "", "", TargetOptions());
-    TLI = TM->getSubtargetImpl(*(M.begin()))->getTargetLowering();
+		TM = NativeTarget->createTargetMachine(HostTriple, "", "", TargetOptions());
+		TLI = TM->getSubtargetImpl(*(M.begin()))->getTargetLowering();
 #endif
 
-    triple = llvm::Triple(HostTriple);
-  }
+		triple = llvm::Triple(HostTriple);
+	}
 
-  for (Module::iterator fi = M.begin(), fe = M.end(); fi != fe; ++fi) {
-    for (Function::iterator bi = fi->begin(), be = fi->end(); bi != be; ++bi) {
-      for (BasicBlock::iterator ii = bi->begin(), ie = bi->end(); ii != ie;) {
-        Instruction *i = &*ii;
-        ++ii;
-        changed |= runOnInstruction(M, i);
-      }
-    }
-  }
+	for (Module::iterator fi = M.begin(), fe = M.end(); fi != fe; ++fi) {
+		for (Function::iterator bi = fi->begin(), be = fi->end(); bi != be; ++bi) {
+			for (BasicBlock::iterator ii = bi->begin(), ie = bi->end(); ii != ie;) {
+				Instruction *i = &*ii;
+				++ii;
+				changed |= runOnInstruction(M, i);
+			}
+		}
+	}
 
-  delete TM;
+	delete TM;
 
-  return changed;
+	return changed;
 }
