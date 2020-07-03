@@ -11,7 +11,7 @@
 #include "klee/klee.h"
 
 int klee_int(const char *name) {
-  int x;
-  klee_make_symbolic(&x, sizeof x, name);
-  return x;
+    int x;
+    klee_make_symbolic(&x, sizeof x, name);
+    return x;
 }

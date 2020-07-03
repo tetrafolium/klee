@@ -15,23 +15,25 @@
 
 namespace klee {
 
-  /**
-   * A TimerStatIncrementer adds its lifetime to a specified Statistic.
-   */
-  class TimerStatIncrementer {
-  private:
+/**
+ * A TimerStatIncrementer adds its lifetime to a specified Statistic.
+ */
+class TimerStatIncrementer {
+private:
     const WallTimer timer;
     Statistic &statistic;
 
-  public:
+public:
     explicit TimerStatIncrementer(Statistic &statistic) : statistic(statistic) {}
     ~TimerStatIncrementer() {
-      // record microseconds
-      statistic += timer.delta().toMicroseconds();
+        // record microseconds
+        statistic += timer.delta().toMicroseconds();
     }
 
-    time::Span delta() const { return timer.delta(); }
-  };
+    time::Span delta() const {
+        return timer.delta();
+    }
+};
 }
 
 #endif /* KLEE_TIMERSTATINCREMENTER_H */

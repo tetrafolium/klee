@@ -13,16 +13,16 @@
 #include "klee/Expr/Expr.h"
 
 namespace llvm {
-  class raw_ostream;
+class raw_ostream;
 }
 namespace klee {
-  class ConstraintSet;
+class ConstraintSet;
 
-  class ExprPPrinter {
-  protected:
+class ExprPPrinter {
+protected:
     ExprPPrinter() {}
-    
-  public:
+
+public:
     static ExprPPrinter *create(llvm::raw_ostream &os);
 
     virtual ~ExprPPrinter() {}
@@ -37,13 +37,13 @@ namespace klee {
 
     template<class Container>
     void scan(Container c) {
-      scan(c.begin(), c.end());
+        scan(c.begin(), c.end());
     }
 
     template<class InputIterator>
     void scan(InputIterator it, InputIterator end) {
-      for (; it!=end; ++it)
-        scan(*it);
+        for (; it!=end; ++it)
+            scan(*it);
     }
 
     /// printOne - Pretty print a single expression prefixed by a
@@ -71,7 +71,7 @@ namespace klee {
                            const Array * const* evalArraysBegin = 0,
                            const Array * const* evalArraysEnd = 0,
                            bool printArrayDecls = true);
-  };
+};
 
 }
 

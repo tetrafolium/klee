@@ -12,5 +12,5 @@
 #include "klee/klee.h"
 
 void abort(void) {
-  klee_abort();
+    klee_abort();
 }

@@ -13,9 +13,9 @@
 #include <cstddef>
 
 namespace klee {
-  namespace util {
-    size_t GetTotalMallocUsage();
-  }
+namespace util {
+size_t GetTotalMallocUsage();
+}
 }
 
 #endif /* KLEE_MEMORYUSAGE_H */

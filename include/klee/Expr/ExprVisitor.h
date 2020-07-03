@@ -13,34 +13,38 @@
 #include "ExprHashMap.h"
 
 namespace klee {
-  class ExprVisitor {
-  protected:
+class ExprVisitor {
+protected:
     // typed variant, but non-virtual for efficiency
     class Action {
     public:
-      enum Kind { SkipChildren, DoChildren, ChangeTo };
+        enum Kind { SkipChildren, DoChildren, ChangeTo };
 
     private:
-      //      Action() {}
-      Action(Kind _kind) 
-        : kind(_kind), argument(nullptr) {}
-      Action(Kind _kind, const ref<Expr> &_argument) 
-        : kind(_kind), argument(_argument) {}
+        //      Action() {}
+        Action(Kind _kind)
+            : kind(_kind), argument(nullptr) {}
+        Action(Kind _kind, const ref<Expr> &_argument)
+            : kind(_kind), argument(_argument) {}
 
-      friend class ExprVisitor;
+        friend class ExprVisitor;
 
     public:
-      Kind kind;
-      ref<Expr> argument;
+        Kind kind;
+        ref<Expr> argument;
 
-      static Action changeTo(const ref<Expr> &expr) { 
-        return Action(ChangeTo,expr); 
-      }
-      static Action doChildren() { return Action(DoChildren); }
-      static Action skipChildren() { return Action(SkipChildren); }
+        static Action changeTo(const ref<Expr> &expr) {
+            return Action(ChangeTo,expr);
+        }
+        static Action doChildren() {
+            return Action(DoChildren);
+        }
+        static Action skipChildren() {
+            return Action(SkipChildren);
+        }
     };
 
-  protected:
+protected:
     explicit
     ExprVisitor(bool _recursive=false) : recursive(_recursive) {}
     virtual ~ExprVisitor() {}
@@ -80,18 +84,18 @@ namespace klee {
     virtual Action visitSgt(const SgtExpr&);
     virtual Action visitSge(const SgeExpr&);
 
-  private:
+private:
     typedef ExprHashMap< ref<Expr> > visited_ty;
     visited_ty visited;
     bool recursive;
 
     ref<Expr> visitActual(const ref<Expr> &e);
-    
-  public:
+
+public:
     // apply the visitor to the expression and return a possibly
     // modified new expression.
     ref<Expr> visit(const ref<Expr> &e);
-  };
+};
 
 }
 

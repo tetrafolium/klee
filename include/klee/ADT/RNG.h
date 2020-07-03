@@ -11,24 +11,24 @@
 #define KLEE_RNG_H
 
 namespace klee {
-  class RNG {
-  private:
-    /* Period parameters */  
+class RNG {
+private:
+    /* Period parameters */
     static const int N = 624;
     static const int M = 397;
     static const unsigned int MATRIX_A = 0x9908b0dfUL;   /* constant vector a */
     static const unsigned int UPPER_MASK = 0x80000000UL; /* most significant w-r bits */
     static const unsigned int LOWER_MASK = 0x7fffffffUL; /* least significant r bits */
-      
-  private:
+
+private:
     unsigned int mt[N]; /* the array for the state vector  */
     int mti;
-    
-  public:
+
+public:
     RNG(unsigned int seed=5489UL);
-  
+
     void seed(unsigned int seed);
-    
+
     /* generates a random number on [0,0xffffffff]-interval */
     unsigned int getInt32();
     /* generates a random number on [0,0x7fffffff]-interval */
@@ -44,7 +44,7 @@ namespace klee {
     float getFloat();
     /* generators a random flop */
     bool getBool();
-  };
+};
 }
 
 #endif /* KLEE_RNG_H */

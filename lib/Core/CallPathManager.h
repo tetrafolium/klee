@@ -17,31 +17,31 @@
 #include <vector>
 
 namespace llvm {
-  class Instruction;
-  class Function;
+class Instruction;
+class Function;
 }
 
 namespace klee {
-  class StatisticRecord;
+class StatisticRecord;
 
-  struct CallSiteInfo {
+struct CallSiteInfo {
     unsigned count;
     StatisticRecord statistics;
 
-  public:
+public:
     CallSiteInfo() : count(0) {}
-  };
+};
 
-  typedef std::map<const llvm::Instruction *,
-                   std::map<const llvm::Function *, CallSiteInfo>>
-      CallSiteSummaryTable;
+typedef std::map<const llvm::Instruction *,
+        std::map<const llvm::Function *, CallSiteInfo>>
+        CallSiteSummaryTable;
 
-  class CallPathNode {
+class CallPathNode {
     friend class CallPathManager;
 
-  public:
+public:
     typedef std::map<
-        std::pair<const llvm::Instruction *, const llvm::Function *>,
+    std::pair<const llvm::Instruction *, const llvm::Function *>,
         CallPathNode *>
         children_ty;
 
@@ -55,23 +55,23 @@ namespace klee {
     StatisticRecord summaryStatistics;
     unsigned count;
 
-  public:
+public:
     CallPathNode(CallPathNode *parent, const llvm::Instruction *callSite,
                  const llvm::Function *function);
 
     void print();
-  };
+};
 
-  class CallPathManager {
+class CallPathManager {
     CallPathNode root;
     std::vector<std::unique_ptr<CallPathNode>> paths;
 
-  private:
+private:
     CallPathNode *computeCallPath(CallPathNode *parent,
                                   const llvm::Instruction *callSite,
                                   const llvm::Function *f);
 
-  public:
+public:
     CallPathManager();
     ~CallPathManager() = default;
 
@@ -80,7 +80,7 @@ namespace klee {
     CallPathNode *getCallPath(CallPathNode *parent,
                               const llvm::Instruction *callSite,
                               const llvm::Function *f);
-  };
+};
 }
 
 #endif /* KLEE_CALLPATHMANAGER_H */

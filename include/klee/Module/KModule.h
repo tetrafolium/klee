@@ -21,25 +21,25 @@
 #include <vector>
 
 namespace llvm {
-  class BasicBlock;
-  class Constant;
-  class Function;
-  class Instruction;
-  class Module;
-  class DataLayout;
+class BasicBlock;
+class Constant;
+class Function;
+class Instruction;
+class Module;
+class DataLayout;
 }
 
 namespace klee {
-  struct Cell;
-  class Executor;
-  class Expr;
-  class InterpreterHandler;
-  class InstructionInfoTable;
-  struct KInstruction;
-  class KModule;
-  template<class T> class ref;
+struct Cell;
+class Executor;
+class Expr;
+class InterpreterHandler;
+class InstructionInfoTable;
+struct KInstruction;
+class KModule;
+template<class T> class ref;
 
-  struct KFunction {
+struct KFunction {
     llvm::Function *function;
 
     unsigned numArgs, numRegisters;
@@ -53,19 +53,21 @@ namespace klee {
     /// "coverable" for statistics and search heuristics.
     bool trackCoverage;
 
-  public:
+public:
     explicit KFunction(llvm::Function*, KModule *);
     KFunction(const KFunction &) = delete;
     KFunction &operator=(const KFunction &) = delete;
 
     ~KFunction();
 
-    unsigned getArgRegister(unsigned index) { return index; }
-  };
+    unsigned getArgRegister(unsigned index) {
+        return index;
+    }
+};
 
 
-  class KConstant {
-  public:
+class KConstant {
+public:
     /// Actual LLVM constant this represents.
     llvm::Constant* ct;
 
@@ -77,11 +79,11 @@ namespace klee {
     KInstruction *ki;
 
     KConstant(llvm::Constant*, unsigned, KInstruction*);
-  };
+};
 
 
-  class KModule {
-  public:
+class KModule {
+public:
     std::unique_ptr<llvm::Module> module;
     std::unique_ptr<llvm::DataLayout> targetData;
 
@@ -104,11 +106,11 @@ namespace klee {
     // Functions which are part of KLEE runtime
     std::set<const llvm::Function*> internalFunctions;
 
-  private:
+private:
     // Mark function with functionName as part of the KLEE runtime
     void addInternalFunction(const char* functionName);
 
-  public:
+public:
     KModule() = default;
 
     /// Optimise and prepare module such that KLEE can execute it
@@ -147,7 +149,7 @@ namespace klee {
     /// Run passes that check if module is valid LLVM IR and if invariants
     /// expected by KLEE's Executor hold.
     void checkModule();
-  };
+};
 } // End klee namespace
 
 #endif /* KLEE_KMODULE_H */

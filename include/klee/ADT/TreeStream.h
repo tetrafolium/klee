@@ -15,15 +15,15 @@
 
 namespace klee {
 
-  typedef unsigned TreeStreamID;
-  class TreeOStream;
+typedef unsigned TreeStreamID;
+class TreeOStream;
 
-  class TreeStreamWriter {
+class TreeStreamWriter {
     static const unsigned bufferSize = 4*4096;
 
     friend class TreeOStream;
 
-  private:
+private:
     char buffer[bufferSize];
     unsigned lastID, bufferCount;
 
@@ -34,7 +34,7 @@ namespace klee {
     void write(TreeOStream &os, const char *s, unsigned size);
     void flushBuffer();
 
-  public:
+public:
     TreeStreamWriter(const std::string &_path);
     ~TreeStreamWriter();
 
@@ -48,18 +48,18 @@ namespace klee {
     // hack, to be replace by proper stream capabilities
     void readStream(TreeStreamID id,
                     std::vector<unsigned char> &out);
-  };
+};
 
-  class TreeOStream {
+class TreeOStream {
     friend class TreeStreamWriter;
 
-  private:
+private:
     TreeStreamWriter *writer;
     unsigned id;
-    
+
     TreeOStream(TreeStreamWriter &_writer, unsigned _id);
 
-  public:
+public:
     TreeOStream();
     ~TreeOStream();
 
@@ -70,7 +70,7 @@ namespace klee {
     TreeOStream &operator<<(const std::string &s);
 
     void flush();
-  };
+};
 }
 
 #endif /* KLEE_TREESTREAM_H */

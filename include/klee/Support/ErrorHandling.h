@@ -26,7 +26,7 @@ extern FILE *klee_message_file;
 /// Print "KLEE: ERROR: " followed by the msg in printf format and a
 /// newline on stderr and to warnings.txt, then exit with an error.
 void klee_error(const char *msg, ...)
-    __attribute__((format(printf, 1, 2), noreturn));
+__attribute__((format(printf, 1, 2), noreturn));
 
 /// Print "KLEE: " followed by the msg in printf format and a
 /// newline on stderr and to messages.txt.
@@ -35,7 +35,7 @@ void klee_message(const char *msg, ...) __attribute__((format(printf, 1, 2)));
 /// Print "KLEE: " followed by the msg in printf format and a
 /// newline to messages.txt.
 void klee_message_to_file(const char *msg, ...)
-    __attribute__((format(printf, 1, 2)));
+__attribute__((format(printf, 1, 2)));
 
 /// Print "KLEE: WARNING: " followed by the msg in printf format and a
 /// newline on stderr and to warnings.txt.
@@ -45,7 +45,7 @@ void klee_warning(const char *msg, ...) __attribute__((format(printf, 1, 2)));
 /// newline on stderr and to warnings.txt. However, the warning is only
 /// printed once for each unique (id, msg) pair (as pointers).
 void klee_warning_once(const void *id, const char *msg, ...)
-    __attribute__((format(printf, 2, 3)));
+__attribute__((format(printf, 2, 3)));
 }
 
 #endif /* KLEE_ERRORHANDLING_H */

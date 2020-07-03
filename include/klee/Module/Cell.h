@@ -13,11 +13,11 @@
 #include "klee/Expr/Expr.h"
 
 namespace klee {
-  class MemoryObject;
+class MemoryObject;
 
-  struct Cell {
+struct Cell {
     ref<Expr> value;
-  };
+};
 }
 
 #endif /* KLEE_CELL_H */

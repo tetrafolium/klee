@@ -10,6 +10,6 @@
 #include "klee/klee.h"
 
 void klee_div_zero_check(long long z) {
-  if (z == 0)
-    klee_report_error(__FILE__, __LINE__, "divide by zero", "div.err");
+    if (z == 0)
+        klee_report_error(__FILE__, __LINE__, "divide by zero", "div.err");
 }

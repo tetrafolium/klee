@@ -49,8 +49,8 @@ private :
 
 public:
     KQueryLoggingSolver(Solver *_solver, std::string path, time::Span queryTimeToLog, bool logTimedOut)
-    : QueryLoggingSolver(_solver, path, "#", queryTimeToLog, logTimedOut),
-    printer(ExprPPrinter::create(logBuffer)) {
+        : QueryLoggingSolver(_solver, path, "#", queryTimeToLog, logTimedOut),
+          printer(ExprPPrinter::create(logBuffer)) {
     }
 
     virtual ~KQueryLoggingSolver() {
@@ -61,7 +61,7 @@ public:
 ///
 
 Solver *klee::createKQueryLoggingSolver(Solver *_solver, std::string path,
-                                    time::Span minQueryTimeToLog, bool logTimedOut) {
-  return new Solver(new KQueryLoggingSolver(_solver, path, minQueryTimeToLog, logTimedOut));
+                                        time::Span minQueryTimeToLog, bool logTimedOut) {
+    return new Solver(new KQueryLoggingSolver(_solver, path, minQueryTimeToLog, logTimedOut));
 }
 
