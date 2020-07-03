@@ -4,11 +4,14 @@ inspecode:
   - ignore: [ 'test/', 'unittest/' ]
     thresholds: { num-issues: 999 }
   - ignore: [ 'test/', 'unittest/' ]
-    options: { --filter: -,+build }
+    options:
+      --filter: -,+build
     thresholds: { num-issues: 999 }
   - ignore: [ 'test/', 'unittest/' ]
-    options: { --filter: -,+runtime }
+    options:
+      --filter: -,+runtime
     thresholds: { num-issues: 999 }
   - ignore: [ 'test/', 'unittest/' ]
-    options: { --filter: -,+legal,+readability }
+    options:
+      --filter: -,+legal,+readability
     thresholds: { num-issues: 999 }
