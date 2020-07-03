@@ -7,11 +7,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include <assert.h>
 #include "klee/klee.h"
+#include <assert.h>
 
 int klee_int(const char *name) {
-    int x;
-    klee_make_symbolic(&x, sizeof x, name);
-    return x;
+  int x;
+  klee_make_symbolic(&x, sizeof x, name);
+  return x;
 }

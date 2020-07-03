@@ -47,7 +47,7 @@ extern Statistic minDistToUncovered;
 /// distance to a function return.
 extern Statistic minDistToReturn;
 
-}
-}
+} // namespace stats
+} // namespace klee
 
 #endif /* KLEE_CORESTATS_H */

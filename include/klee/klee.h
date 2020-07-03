@@ -10,8 +10,8 @@
 #ifndef KLEE_H
 #define KLEE_H
 
-#include "stdint.h"
 #include "stddef.h"
+#include "stdint.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,12 +54,10 @@ int klee_int(const char *name);
 /* klee_silent_exit - Terminate the current KLEE process without generating a
  * test file.
  */
-__attribute__((noreturn))
-void klee_silent_exit(int status);
+__attribute__((noreturn)) void klee_silent_exit(int status);
 
 /* klee_abort - Abort the current KLEE process. */
-__attribute__((noreturn))
-void klee_abort(void);
+__attribute__((noreturn)) void klee_abort(void);
 
 /* klee_report_error - Report a user defined error and terminate the current
  * KLEE process.
@@ -69,11 +67,9 @@ void klee_abort(void);
  * \arg message - A string to include in the error message.
  * \arg suffix - The suffix to use for error files.
  */
-__attribute__((noreturn))
-void klee_report_error(const char *file,
-                       int line,
-                       const char *message,
-                       const char *suffix);
+__attribute__((noreturn)) void klee_report_error(const char *file, int line,
+                                                 const char *message,
+                                                 const char *suffix);
 
 /* called by checking code to get size of memory. */
 size_t klee_get_obj_size(void *ptr);
@@ -90,10 +86,9 @@ uintptr_t klee_choose(uintptr_t n);
  * across platforms is desired (e.g., in tests).
  * NB: __assert_fail is a klee "special" function
  */
-# define klee_assert(expr)                                              \
-  ((expr)                                                               \
-   ? (void) (0)                                                         \
-   : __assert_fail (#expr, __FILE__, __LINE__, __PRETTY_FUNCTION__))    \
+#define klee_assert(expr)                                                      \
+  ((expr) ? (void)(0)                                                          \
+          : __assert_fail(#expr, __FILE__, __LINE__, __PRETTY_FUNCTION__))
 
 /* Return true if the given value is symbolic (represented by an
  * expression) in the current state. This is primarily for debugging
@@ -101,7 +96,6 @@ uintptr_t klee_choose(uintptr_t n);
  * mode.
  */
 unsigned klee_is_symbolic(uintptr_t n);
-
 
 /* The following intrinsics are primarily intended for internal use
    and may have peculiar semantics. */
@@ -115,7 +109,8 @@ void klee_mark_global(void *object);
 
 /* Return a possible constant value for the input expression. This
    allows programs to forcibly concretize values on their own. */
-#define KLEE_GET_VALUE_PROTO(suffix, type)	type klee_get_value##suffix(type expr)
+#define KLEE_GET_VALUE_PROTO(suffix, type)                                     \
+  type klee_get_value##suffix(type expr)
 
 KLEE_GET_VALUE_PROTO(f, float);
 KLEE_GET_VALUE_PROTO(d, double);
@@ -142,7 +137,7 @@ void klee_set_forking(unsigned enable);
 void klee_stack_trace(void);
 
 /* Print range for given argument and tagged with name */
-void klee_print_range(const char * name, int arg );
+void klee_print_range(const char *name, int arg);
 
 /* Open a merge */
 void klee_open_merge();

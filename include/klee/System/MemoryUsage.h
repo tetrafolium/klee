@@ -16,6 +16,6 @@ namespace klee {
 namespace util {
 size_t GetTotalMallocUsage();
 }
-}
+} // namespace klee
 
 #endif /* KLEE_MEMORYUSAGE_H */

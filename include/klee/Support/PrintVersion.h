@@ -20,6 +20,6 @@ void printVersion(llvm::raw_ostream &OS);
 #else
 void printVersion();
 #endif
-}
+} // namespace klee
 
 #endif /* KLEE_PRINTVERSION_H */

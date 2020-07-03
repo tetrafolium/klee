@@ -20,20 +20,18 @@ namespace klee {
  */
 class TimerStatIncrementer {
 private:
-    const WallTimer timer;
-    Statistic &statistic;
+  const WallTimer timer;
+  Statistic &statistic;
 
 public:
-    explicit TimerStatIncrementer(Statistic &statistic) : statistic(statistic) {}
-    ~TimerStatIncrementer() {
-        // record microseconds
-        statistic += timer.delta().toMicroseconds();
-    }
+  explicit TimerStatIncrementer(Statistic &statistic) : statistic(statistic) {}
+  ~TimerStatIncrementer() {
+    // record microseconds
+    statistic += timer.delta().toMicroseconds();
+  }
 
-    time::Span delta() const {
-        return timer.delta();
-    }
+  time::Span delta() const { return timer.delta(); }
 };
-}
+} // namespace klee
 
 #endif /* KLEE_TIMERSTATINCREMENTER_H */

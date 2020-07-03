@@ -26,16 +26,15 @@ class Expr;
 class ReadExpr;
 class Solver;
 
-typedef std::vector< std::pair<ref<ReadExpr>,
-        ref<ConstantExpr> > > ImpliedValueList;
+typedef std::vector<std::pair<ref<ReadExpr>, ref<ConstantExpr>>>
+    ImpliedValueList;
 
 namespace ImpliedValue {
 void getImpliedValues(ref<Expr> e, ref<ConstantExpr> cvalue,
                       ImpliedValueList &result);
-void checkForImpliedValues(Solver *S, ref<Expr> e,
-                           ref<ConstantExpr> cvalue);
-}
+void checkForImpliedValues(Solver *S, ref<Expr> e, ref<ConstantExpr> cvalue);
+} // namespace ImpliedValue
 
-}
+} // namespace klee
 
 #endif /* KLEE_IMPLIEDVALUE_H */

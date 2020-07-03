@@ -19,68 +19,67 @@
 namespace llvm {
 class Instruction;
 class Function;
-}
+} // namespace llvm
 
 namespace klee {
 class StatisticRecord;
 
 struct CallSiteInfo {
-    unsigned count;
-    StatisticRecord statistics;
+  unsigned count;
+  StatisticRecord statistics;
 
 public:
-    CallSiteInfo() : count(0) {}
+  CallSiteInfo() : count(0) {}
 };
 
 typedef std::map<const llvm::Instruction *,
-        std::map<const llvm::Function *, CallSiteInfo>>
-        CallSiteSummaryTable;
+                 std::map<const llvm::Function *, CallSiteInfo>>
+    CallSiteSummaryTable;
 
 class CallPathNode {
-    friend class CallPathManager;
+  friend class CallPathManager;
 
 public:
-    typedef std::map<
-    std::pair<const llvm::Instruction *, const llvm::Function *>,
-        CallPathNode *>
-        children_ty;
+  typedef std::map<std::pair<const llvm::Instruction *, const llvm::Function *>,
+                   CallPathNode *>
+      children_ty;
 
-    // form list of (callSite,function) path
-    CallPathNode *parent;
-    const llvm::Instruction *callSite;
-    const llvm::Function *function;
-    children_ty children;
+  // form list of (callSite,function) path
+  CallPathNode *parent;
+  const llvm::Instruction *callSite;
+  const llvm::Function *function;
+  children_ty children;
 
-    StatisticRecord statistics;
-    StatisticRecord summaryStatistics;
-    unsigned count;
+  StatisticRecord statistics;
+  StatisticRecord summaryStatistics;
+  unsigned count;
 
 public:
-    CallPathNode(CallPathNode *parent, const llvm::Instruction *callSite,
-                 const llvm::Function *function);
+  CallPathNode(CallPathNode *parent, const llvm::Instruction *callSite,
+               const llvm::Function *function);
 
-    void print();
+  void print();
 };
 
 class CallPathManager {
-    CallPathNode root;
-    std::vector<std::unique_ptr<CallPathNode>> paths;
+  CallPathNode root;
+  std::vector<std::unique_ptr<CallPathNode>> paths;
 
 private:
-    CallPathNode *computeCallPath(CallPathNode *parent,
-                                  const llvm::Instruction *callSite,
-                                  const llvm::Function *f);
+  CallPathNode *computeCallPath(CallPathNode *parent,
+                                const llvm::Instruction *callSite,
+                                const llvm::Function *f);
 
 public:
-    CallPathManager();
-    ~CallPathManager() = default;
+  CallPathManager();
+  ~CallPathManager() = default;
 
-    void getSummaryStatistics(CallSiteSummaryTable &result);
+  void getSummaryStatistics(CallSiteSummaryTable &result);
 
-    CallPathNode *getCallPath(CallPathNode *parent,
-                              const llvm::Instruction *callSite,
-                              const llvm::Function *f);
+  CallPathNode *getCallPath(CallPathNode *parent,
+                            const llvm::Instruction *callSite,
+                            const llvm::Function *f);
 };
-}
+} // namespace klee
 
 #endif /* KLEE_CALLPATHMANAGER_H */
