@@ -1,31 +1,32 @@
 inspecode:
 
+  global:
+    ignore:
+    - test/
+    - unittest/
+
   astyle:
     auto-fix: true
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 461 }
 
   clang-format:
     auto-fix: true
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 391 }
 
   cpd:
-    options: [ --skip-lexical-errors ]
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 28 }
 
   cppcheck:
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 31 }
 
   cpplint:
-  - ignore: [ 'test/', 'unittest/' ]
-    options:
+  - options:
       --filter: [ '-', '+build' ]
     thresholds: { num-issues: 771 }
-  - ignore: [ 'test/', 'unittest/' ]
-    options:
+  - options:
       --filter: [ '-', '+runtime' ]
     thresholds: { num-issues: 672 }
-  - ignore: [ 'test/', 'unittest/' ]
-    options:
+  - options:
       --filter: [ '-', '+legal', '+readability' ]
     thresholds: { num-issues: 529 }
 
@@ -33,31 +34,31 @@ inspecode:
   #  thresholds: { num-issues: 999 }
 
   fossology:
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 16 }
 
   grep:
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 201 }
 
   infer:
     thresholds: { num-issues: 999 }
 
   jscpd:
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 90 }
 
   misspell:
     auto-fix: true
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 37 }
 
   scan-build:
     thresholds: { num-issues: 999 }
 
   uncrustify:
     auto-fix: true
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 460 }
 
   #understand:
   #  thresholds: { num-issues: 999 }
 
   unused:
     options: [ --single-occurrence, --all-likelihoods ]
-    thresholds: { num-issues: 999 }
+    thresholds: { num-issues: 495 }
