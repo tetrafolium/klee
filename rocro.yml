@@ -1,12 +1,14 @@
 inspecode:
 
   cpplint:
-  - options:
-      --filter: -,+build
-    thresholds: { num-issues: 778 }
-  - options:
-      --filter: -,+runtime
-    thresholds: { num-issues: 822 }
-  - options:
-      --filter: -,+legal,+readability
-    thresholds: { num-issues: 903 } # 467+336
+  - ignore: [ 'test/', 'unittest/' ]
+    thresholds: { num-issues: 999 }
+  - ignore: [ 'test/', 'unittest/' ]
+    options: { --filter: -,+build }
+    thresholds: { num-issues: 999 }
+  - ignore: [ 'test/', 'unittest/' ]
+    options: { --filter: -,+runtime }
+    thresholds: { num-issues: 999 }
+  - ignore: [ 'test/', 'unittest/' ]
+    options: { --filter: -,+legal,+readability }
+    thresholds: { num-issues: 999 }
