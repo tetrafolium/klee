@@ -1,52 +1,15 @@
 inspecode:
 
-  astyle:
-    auto-fix: true
-    thresholds: { num-issues: 999 }
-
-  clang-format:
-    auto-fix: true
-    thresholds: { num-issues: 999 }
-
-  cpd:
-    options: [ --skip-lexical-errors ]
-    thresholds: { num-issues: 999 }
-
-  cppcheck:
-    thresholds: { num-issues: 999 }
-
   cpplint:
+  - ignore:
+    - test/
     thresholds: { num-issues: 999 }
-
-  #fortify:
-  #  thresholds: { num-issues: 999 }
-
-  fossology:
-    thresholds: { num-issues: 999 }
-
-  grep:
-    thresholds: { num-issues: 999 }
-
-  infer:
-    thresholds: { num-issues: 999 }
-
-  jscpd:
-    thresholds: { num-issues: 999 }
-
-  misspell:
-    auto-fix: true
-    thresholds: { num-issues: 999 }
-
-  scan-build:
-    thresholds: { num-issues: 999 }
-
-  uncrustify:
-    auto-fix: true
-    thresholds: { num-issues: 999 }
-
-  #understand:
-  #  thresholds: { num-issues: 999 }
-
-  unused:
-    options: [ --single-occurrence, --all-likelihoods ]
-    thresholds: { num-issues: 999 }
+  - options:
+      --filter: +build
+    thresholds: { num-issues: 778 }
+  - options:
+      --filter: +runtime
+    thresholds: { num-issues: 822 }
+  - options:
+      --filter: +legal,+readability
+    thresholds: { num-issues: 903 } # 467+336
