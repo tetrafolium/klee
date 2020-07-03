@@ -16,7 +16,18 @@ inspecode:
     thresholds: { num-issues: 999 }
 
   cpplint:
-    thresholds: { num-issues: 999 }
+  - ignore: [ 'test/', 'unittest/' ]
+    options:
+      --filter: -,+build
+    thresholds: { num-issues: 771 }
+  - ignore: [ 'test/', 'unittest/' ]
+    options:
+      --filter: -,+runtime
+    thresholds: { num-issues: 672 }
+  - ignore: [ 'test/', 'unittest/' ]
+    options:
+      --filter: -,+legal,+readability
+    thresholds: { num-issues: 529 }
 
   #fortify:
   #  thresholds: { num-issues: 999 }
