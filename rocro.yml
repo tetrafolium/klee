@@ -7,17 +7,17 @@ inspecode:
 
   astyle:
     auto-fix: true
-    thresholds: { num-issues: 461 }
+    thresholds: { num-issues: 233 }
 
   clang-format:
     auto-fix: true
-    thresholds: { num-issues: 391 }
+    thresholds: { num-issues: 215 }
 
   cpd:
-    thresholds: { num-issues: 28 }
+    thresholds: { num-issues: 14 }
 
   cppcheck:
-    thresholds: { num-issues: 31 }
+    thresholds: { num-issues: 8 }
 
   cpplint:
   - options:
@@ -37,28 +37,34 @@ inspecode:
     thresholds: { num-issues: 16 }
 
   grep:
-    thresholds: { num-issues: 201 }
+    thresholds: { num-issues: 198 }
 
-  infer:
-    thresholds: { num-issues: 999 }
+  ### CMake Error at CMakeLists.txt:85 (message):
+  ###   In source builds are not allowed.
+  ###   You should invoke CMake from a different directory.
+  #infer:
+  #  thresholds: { num-issues: 999 }
 
   jscpd:
-    thresholds: { num-issues: 90 }
+    thresholds: { num-issues: 56 }
 
   misspell:
     auto-fix: true
-    thresholds: { num-issues: 37 }
+    thresholds: { num-issues: 33 }
 
-  scan-build:
-    thresholds: { num-issues: 999 }
+  ### CMake Error at CMakeLists.txt:85 (message):
+  ###   In source builds are not allowed.
+  ###   You should invoke CMake from a different directory.
+  #scan-build:
+  #  thresholds: { num-issues: 999 }
 
   uncrustify:
     auto-fix: true
-    thresholds: { num-issues: 460 }
+    thresholds: { num-issues: 231 }
 
   #understand:
   #  thresholds: { num-issues: 999 }
 
   unused:
     options: [ --single-occurrence, --all-likelihoods ]
-    thresholds: { num-issues: 495 }
+    thresholds: { num-issues: 500 }
