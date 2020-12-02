@@ -25,7 +25,7 @@ template <typename T> class ref;
 /// update lists. Note that this may be slow and return a large
 /// number of results.
 void findReads(ref<Expr> e, bool visitUpdates,
-               std::vector<ref<ReadExpr>> &result);
+               std::vector<ref<ReadExpr> > &result);
 
 /// Return a list of all unique symbolic objects referenced by the given
 /// expression.
@@ -39,10 +39,10 @@ void findSymbolicObjects(InputIterator begin, InputIterator end,
 
 class ConstantArrayFinder : public ExprVisitor {
 protected:
-  ExprVisitor::Action visitRead(const ReadExpr &re);
+ExprVisitor::Action visitRead(const ReadExpr &re);
 
 public:
-  std::set<const Array *> results;
+std::set<const Array *> results;
 };
 } // namespace klee
 

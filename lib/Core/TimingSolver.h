@@ -26,50 +26,53 @@ class Solver;
 /// tracking the statistics that we care about.
 class TimingSolver {
 public:
-  std::unique_ptr<Solver> solver;
-  bool simplifyExprs;
+std::unique_ptr<Solver> solver;
+bool simplifyExprs;
 
 public:
-  /// TimingSolver - Construct a new timing solver.
-  ///
-  /// \param _simplifyExprs - Whether expressions should be
-  /// simplified (via the constraint manager interface) prior to
-  /// querying.
-  TimingSolver(Solver *_solver, bool _simplifyExprs = true)
-      : solver(_solver), simplifyExprs(_simplifyExprs) {}
+/// TimingSolver - Construct a new timing solver.
+///
+/// \param _simplifyExprs - Whether expressions should be
+/// simplified (via the constraint manager interface) prior to
+/// querying.
+TimingSolver(Solver *_solver, bool _simplifyExprs = true)
+	: solver(_solver), simplifyExprs(_simplifyExprs) {
+}
 
-  void setTimeout(time::Span t) { solver->setCoreSolverTimeout(t); }
+void setTimeout(time::Span t) {
+	solver->setCoreSolverTimeout(t);
+}
 
-  char *getConstraintLog(const Query &query) {
-    return solver->getConstraintLog(query);
-  }
+char *getConstraintLog(const Query &query) {
+	return solver->getConstraintLog(query);
+}
 
-  bool evaluate(const ConstraintSet &, ref<Expr>, Solver::Validity &result,
+bool evaluate(const ConstraintSet &, ref<Expr>, Solver::Validity &result,
+              SolverQueryMetaData &metaData);
+
+bool mustBeTrue(const ConstraintSet &, ref<Expr>, bool &result,
                 SolverQueryMetaData &metaData);
 
-  bool mustBeTrue(const ConstraintSet &, ref<Expr>, bool &result,
-                  SolverQueryMetaData &metaData);
-
-  bool mustBeFalse(const ConstraintSet &, ref<Expr>, bool &result,
-                   SolverQueryMetaData &metaData);
-
-  bool mayBeTrue(const ConstraintSet &, ref<Expr>, bool &result,
+bool mustBeFalse(const ConstraintSet &, ref<Expr>, bool &result,
                  SolverQueryMetaData &metaData);
 
-  bool mayBeFalse(const ConstraintSet &, ref<Expr>, bool &result,
-                  SolverQueryMetaData &metaData);
+bool mayBeTrue(const ConstraintSet &, ref<Expr>, bool &result,
+               SolverQueryMetaData &metaData);
 
-  bool getValue(const ConstraintSet &, ref<Expr> expr,
-                ref<ConstantExpr> &result, SolverQueryMetaData &metaData);
+bool mayBeFalse(const ConstraintSet &, ref<Expr>, bool &result,
+                SolverQueryMetaData &metaData);
 
-  bool getInitialValues(const ConstraintSet &,
-                        const std::vector<const Array *> &objects,
-                        std::vector<std::vector<unsigned char>> &result,
-                        SolverQueryMetaData &metaData);
+bool getValue(const ConstraintSet &, ref<Expr> expr,
+              ref<ConstantExpr> &result, SolverQueryMetaData &metaData);
 
-  std::pair<ref<Expr>, ref<Expr>> getRange(const ConstraintSet &,
-                                           ref<Expr> query,
-                                           SolverQueryMetaData &metaData);
+bool getInitialValues(const ConstraintSet &,
+                      const std::vector<const Array *> &objects,
+                      std::vector<std::vector<unsigned char> > &result,
+                      SolverQueryMetaData &metaData);
+
+std::pair<ref<Expr>, ref<Expr> > getRange(const ConstraintSet &,
+                                          ref<Expr> query,
+                                          SolverQueryMetaData &metaData);
 };
 } // namespace klee
 

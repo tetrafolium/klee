@@ -17,11 +17,11 @@ namespace klee {
 
 template <typename SolverContext> class MetaSMTSolver : public Solver {
 public:
-  MetaSMTSolver(bool useForked, bool optimizeDivides);
-  virtual ~MetaSMTSolver();
+MetaSMTSolver(bool useForked, bool optimizeDivides);
+virtual ~MetaSMTSolver();
 
-  virtual char *getConstraintLog(const Query &);
-  virtual void setCoreSolverTimeout(time::Span timeout);
+virtual char *getConstraintLog(const Query &);
+virtual void setCoreSolverTimeout(time::Span timeout);
 };
 
 /// createMetaSMTSolver - Create a solver using the metaSMT backend set by

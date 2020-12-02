@@ -85,38 +85,38 @@ using namespace klee;
 
 size_t util::GetTotalMallocUsage() {
 #ifdef KLEE_ASAN_BUILD
-  // When building with ASan on Linux `mallinfo()` just returns 0 so use ASan
-  // runtime function instead to get used memory.
-  return ASAN_GET_ALLOCATED_MEM_FUNCTION();
+	// When building with ASan on Linux `mallinfo()` just returns 0 so use ASan
+	// runtime function instead to get used memory.
+	return ASAN_GET_ALLOCATED_MEM_FUNCTION();
 #endif
 
 #ifdef HAVE_GPERFTOOLS_MALLOC_EXTENSION_H
-  size_t value = 0;
-  MallocExtension::instance()->GetNumericProperty(
-      "generic.current_allocated_bytes", &value);
-  return value;
+	size_t value = 0;
+	MallocExtension::instance()->GetNumericProperty(
+		"generic.current_allocated_bytes", &value);
+	return value;
 #elif defined(HAVE_MALLINFO)
-  struct mallinfo mi = ::mallinfo();
-  // The malloc implementation in glibc (pmalloc2)
-  // does not include mmap()'ed memory in mi.uordblks
-  // but other implementations (e.g. tcmalloc) do.
+	struct mallinfo mi = ::mallinfo();
+	// The malloc implementation in glibc (pmalloc2)
+	// does not include mmap()'ed memory in mi.uordblks
+	// but other implementations (e.g. tcmalloc) do.
 #if defined(__GLIBC__)
-  return (size_t)(unsigned)mi.uordblks + (unsigned)mi.hblkhd;
+	return (size_t)(unsigned)mi.uordblks + (unsigned)mi.hblkhd;
 #else
-  return (unsigned)mi.uordblks;
+	return (unsigned)mi.uordblks;
 #endif
 
 #elif defined(HAVE_MALLOC_ZONE_STATISTICS)
 
-  // Support memory usage on Darwin.
-  malloc_statistics_t Stats;
-  malloc_zone_statistics(malloc_default_zone(), &Stats);
-  return Stats.size_in_use;
+	// Support memory usage on Darwin.
+	malloc_statistics_t Stats;
+	malloc_zone_statistics(malloc_default_zone(), &Stats);
+	return Stats.size_in_use;
 
 #else // HAVE_MALLINFO
 
 #warning Cannot get malloc info on this platform
-  return 0;
+	return 0;
 
 #endif
 }

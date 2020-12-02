@@ -26,54 +26,54 @@ using namespace klee;
 class QueryLoggingSolver : public SolverImpl {
 
 protected:
-  Solver *solver;
-  std::unique_ptr<llvm::raw_ostream> os;
-  // @brief Buffer used by logBuffer
-  std::string BufferString;
-  // @brief buffer to store logs before flushing to file
-  llvm::raw_string_ostream logBuffer;
-  unsigned queryCount;
-  time::Span minQueryTimeToLog; // we log to file only those queries which take
+Solver *solver;
+std::unique_ptr<llvm::raw_ostream> os;
+// @brief Buffer used by logBuffer
+std::string BufferString;
+// @brief buffer to store logs before flushing to file
+llvm::raw_string_ostream logBuffer;
+unsigned queryCount;
+time::Span minQueryTimeToLog;   // we log to file only those queries which take
                                 // longer than the specified time
-  bool logTimedOutQueries = false;
-  time::Point startTime;
-  time::Span lastQueryDuration;
-  const std::string queryCommentSign; // sign representing commented lines
-  // in given a query format
+bool logTimedOutQueries = false;
+time::Point startTime;
+time::Span lastQueryDuration;
+const std::string queryCommentSign;   // sign representing commented lines
+// in given a query format
 
-  virtual void startQuery(const Query &query, const char *typeName,
-                          const Query *falseQuery = 0,
-                          const std::vector<const Array *> *objects = 0);
+virtual void startQuery(const Query &query, const char *typeName,
+                        const Query *falseQuery = 0,
+                        const std::vector<const Array *> *objects = 0);
 
-  virtual void finishQuery(bool success);
+virtual void finishQuery(bool success);
 
-  /// flushBuffer - flushes the temporary logs buffer. Depending on threshold
-  /// settings, contents of the buffer are either discarded or written to a
-  /// file.
-  void flushBuffer(void);
+/// flushBuffer - flushes the temporary logs buffer. Depending on threshold
+/// settings, contents of the buffer are either discarded or written to a
+/// file.
+void flushBuffer(void);
 
-  virtual void printQuery(const Query &query, const Query *falseQuery = 0,
-                          const std::vector<const Array *> *objects = 0) = 0;
-  void flushBufferConditionally(bool writeToFile);
+virtual void printQuery(const Query &query, const Query *falseQuery = 0,
+                        const std::vector<const Array *> *objects = 0) = 0;
+void flushBufferConditionally(bool writeToFile);
 
 public:
-  QueryLoggingSolver(Solver *_solver, std::string path,
-                     const std::string &commentSign, time::Span queryTimeToLog,
-                     bool logTimedOut);
+QueryLoggingSolver(Solver *_solver, std::string path,
+                   const std::string &commentSign, time::Span queryTimeToLog,
+                   bool logTimedOut);
 
-  virtual ~QueryLoggingSolver();
+virtual ~QueryLoggingSolver();
 
-  /// implementation of the SolverImpl interface
-  bool computeTruth(const Query &query, bool &isValid);
-  bool computeValidity(const Query &query, Solver::Validity &result);
-  bool computeValue(const Query &query, ref<Expr> &result);
-  bool computeInitialValues(const Query &query,
-                            const std::vector<const Array *> &objects,
-                            std::vector<std::vector<unsigned char>> &values,
-                            bool &hasSolution);
-  SolverRunStatus getOperationStatusCode();
-  char *getConstraintLog(const Query &);
-  void setCoreSolverTimeout(time::Span timeout);
+/// implementation of the SolverImpl interface
+bool computeTruth(const Query &query, bool &isValid);
+bool computeValidity(const Query &query, Solver::Validity &result);
+bool computeValue(const Query &query, ref<Expr> &result);
+bool computeInitialValues(const Query &query,
+                          const std::vector<const Array *> &objects,
+                          std::vector<std::vector<unsigned char> > &values,
+                          bool &hasSolution);
+SolverRunStatus getOperationStatusCode();
+char *getConstraintLog(const Query &);
+void setCoreSolverTimeout(time::Span timeout);
 };
 
 #endif /* KLEE_QUERYLOGGINGSOLVER_H */

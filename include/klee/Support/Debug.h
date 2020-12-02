@@ -21,8 +21,8 @@
 #define KLEE_DEBUG_WITH_TYPE(TYPE, X) DEBUG_WITH_TYPE(TYPE, X)
 #else
 #define KLEE_DEBUG_WITH_TYPE(TYPE, X)                                          \
-  do {                                                                         \
-  } while (0)
+	do {                                                                         \
+	} while (0)
 #endif
 #define KLEE_DEBUG(X) KLEE_DEBUG_WITH_TYPE(DEBUG_TYPE, X)
 

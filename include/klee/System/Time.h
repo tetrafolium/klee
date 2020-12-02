@@ -38,17 +38,18 @@ Span getUserTime();
 Point getWallTime();
 
 struct Point {
-  using SteadyTimePoint = std::chrono::steady_clock::time_point;
+	using SteadyTimePoint = std::chrono::steady_clock::time_point;
 
-  SteadyTimePoint point;
+	SteadyTimePoint point;
 
-  // ctors
-  Point() = default;
-  explicit Point(SteadyTimePoint p) : point(p){};
+	// ctors
+	Point() = default;
+	explicit Point(SteadyTimePoint p) : point(p){
+	};
 
-  // operators
-  Point &operator+=(const Span &);
-  Point &operator-=(const Span &);
+	// operators
+	Point &operator+=(const Span &);
+	Point &operator-=(const Span &);
 };
 
 // operators
@@ -68,29 +69,30 @@ using Duration = std::chrono::steady_clock::duration;
 }
 
 struct Span {
-  Duration duration = Duration::zero();
+	Duration duration = Duration::zero();
 
-  // ctors
-  Span() = default;
-  explicit Span(const Duration &d) : duration(d) {}
-  explicit Span(const std::string &s);
+	// ctors
+	Span() = default;
+	explicit Span(const Duration &d) : duration(d) {
+	}
+	explicit Span(const std::string &s);
 
-  // operators
-  Span &operator=(const Duration &);
-  Span &operator+=(const Span &);
-  Span &operator-=(const Span &);
-  Span &operator*=(unsigned);
-  Span &operator*=(double);
+	// operators
+	Span &operator=(const Duration &);
+	Span &operator+=(const Span &);
+	Span &operator-=(const Span &);
+	Span &operator*=(unsigned);
+	Span &operator*=(double);
 
-  // conversions
-  explicit operator Duration() const;
-  explicit operator bool() const;
-  explicit operator timeval() const;
+	// conversions
+	explicit operator Duration() const;
+	explicit operator bool() const;
+	explicit operator timeval() const;
 
-  std::uint64_t toMicroseconds() const;
-  double toSeconds() const;
-  std::tuple<std::uint32_t, std::uint8_t, std::uint8_t>
-  toHMS() const; // hours, minutes, seconds
+	std::uint64_t toMicroseconds() const;
+	double toSeconds() const;
+	std::tuple<std::uint32_t, std::uint8_t, std::uint8_t>
+	toHMS() const; // hours, minutes, seconds
 };
 
 Span operator+(const Span &, const Span &);

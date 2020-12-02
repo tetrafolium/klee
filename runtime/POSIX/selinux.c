@@ -25,51 +25,55 @@ int exe_selinux = 1;
 /* NULL is the default policy behavior */
 KLEE_SELINUX_CTX_CONST char *create_con = NULL;
 
-int is_selinux_enabled() { return exe_selinux; }
+int is_selinux_enabled() {
+	return exe_selinux;
+}
 
 /***/
 
 int getfscreatecon(char **context) {
-  *context = (char *)create_con;
-  return 0;
+	*context = (char *)create_con;
+	return 0;
 }
 
 int setfscreatecon(KLEE_SELINUX_CTX_CONST char *context) {
-  if (context == NULL) {
-    create_con = context;
-    return 0;
-  }
+	if (context == NULL) {
+		create_con = context;
+		return 0;
+	}
 
-  /* on my machine, setfscreatecon seems to incorrectly accept one
-     char strings.. Also, make sure mcstrans > 0.2.8 for replay
-     (important bug fixed) */
-  if (context[0] != '\0' && context[1] == '\0')
-    klee_silent_exit(1);
+	/* on my machine, setfscreatecon seems to incorrectly accept one
+	   char strings.. Also, make sure mcstrans > 0.2.8 for replay
+	   (important bug fixed) */
+	if (context[0] != '\0' && context[1] == '\0')
+		klee_silent_exit(1);
 
-  return -1;
+	return -1;
 }
 
 /***/
 
 int setfilecon(const char *path, KLEE_SELINUX_CTX_CONST char *con) {
-  if (con)
-    return 0;
+	if (con)
+		return 0;
 
-  errno = ENOSPC;
-  return -1;
+	errno = ENOSPC;
+	return -1;
 }
 
 int lsetfilecon(const char *path, KLEE_SELINUX_CTX_CONST char *con) {
-  return setfilecon(path, con);
+	return setfilecon(path, con);
 }
 
 int fsetfilecon(int fd, KLEE_SELINUX_CTX_CONST char *con) {
-  return setfilecon("", con);
+	return setfilecon("", con);
 }
 
 /***/
 
-void freecon(char *con) {}
-void freeconary(char **con) {}
+void freecon(char *con) {
+}
+void freeconary(char **con) {
+}
 
 #endif

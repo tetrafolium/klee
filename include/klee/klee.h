@@ -1,11 +1,11 @@
 /*===-- klee.h --------------------------------------------------*- C++ -*-===//
-//
-//                     The KLEE Symbolic Virtual Machine
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===*/
+   //
+   //                     The KLEE Symbolic Virtual Machine
+   //
+   // This file is distributed under the University of Illinois Open Source
+   // License. See LICENSE.TXT for details.
+   //
+   //===----------------------------------------------------------------------===*/
 
 #ifndef KLEE_H
 #define KLEE_H
@@ -87,8 +87,8 @@ uintptr_t klee_choose(uintptr_t n);
  * NB: __assert_fail is a klee "special" function
  */
 #define klee_assert(expr)                                                      \
-  ((expr) ? (void)(0)                                                          \
-          : __assert_fail(#expr, __FILE__, __LINE__, __PRETTY_FUNCTION__))
+	((expr) ? (void)(0)                                                          \
+	  : __assert_fail(#expr, __FILE__, __LINE__, __PRETTY_FUNCTION__))
 
 /* Return true if the given value is symbolic (represented by an
  * expression) in the current state. This is primarily for debugging
@@ -110,7 +110,7 @@ void klee_mark_global(void *object);
 /* Return a possible constant value for the input expression. This
    allows programs to forcibly concretize values on their own. */
 #define KLEE_GET_VALUE_PROTO(suffix, type)                                     \
-  type klee_get_value##suffix(type expr)
+	type klee_get_value ## suffix(type expr)
 
 KLEE_GET_VALUE_PROTO(f, float);
 KLEE_GET_VALUE_PROTO(d, double);
