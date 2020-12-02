@@ -405,7 +405,7 @@ try_execute_if_exists() {
 }
 
 # Execute the most system specific action possible.
-# If an action executed successfuly, return 0
+# If an action executed successfully, return 0
 # The function will return 1 if an action was not successful
 execution_action() {
     local action="$1"
@@ -734,7 +734,7 @@ main() {
       exit 0
     ;;
     --check-os)
-      # Checks the operating sytem used
+      # Checks the operating system used
       check_os
       exit 0
     ;;

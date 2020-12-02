@@ -103,7 +103,7 @@ bool Solver::getInitialValues(const Query &query,
 	bool hasSolution;
 	bool success =
 		impl->computeInitialValues(query, objects, values, hasSolution);
-	// FIXME: Propogate this out.
+	// FIXME: Propagate this out.
 	if (!hasSolution)
 		return false;
 

@@ -365,10 +365,10 @@ void StatsTracker::stepInstruction(ExecutionState &es) {
 			if (!theStatisticManager->getIndexedValue(stats::coveredInstructions,
 			                                          ii.id)) {
 				// Checking for actual stoppoints avoids inconsistencies due
-				// to line number propogation.
+				// to line number propagation.
 				//
 				// FIXME: This trick no longer works, we should fix this in the line
-				// number propogation.
+				// number propagation.
 				es.coveredLines[&ii.file].insert(ii.line);
 				es.coveredNew = true;
 				es.instsSinceCovNew = 1;

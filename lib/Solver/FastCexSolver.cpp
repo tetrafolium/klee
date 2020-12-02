@@ -487,7 +487,7 @@ void propogateExactValue(ref<Expr> e, uint64_t value) {
 }
 
 void propogatePossibleValues(ref<Expr> e, CexValueData range) {
-	KLEE_DEBUG(llvm::errs() << "propogate: " << range << " for\n" << e << "\n");
+	KLEE_DEBUG(llvm::errs() << "propagate: " << range << " for\n" << e << "\n");
 
 	switch (e->getKind()) {
 	case Expr::Constant:
@@ -628,7 +628,7 @@ void propogatePossibleValues(ref<Expr> e, CexValueData range) {
 		if (ConstantExpr *CE = dyn_cast<ConstantExpr>(be->left)) {
 			// FIXME: Don't depend on width.
 			if (CE->getWidth() <= 64) {
-				// FIXME: Why do we ever propogate empty ranges? It doesn't make
+				// FIXME: Why do we ever propagate empty ranges? It doesn't make
 				// sense.
 				if (range.isEmpty())
 					break;
@@ -852,11 +852,11 @@ void propogateExactValues(ref<Expr> e, CexValueData range) {
 		for (const auto *un = re->updates.head.get(); un; un = un->next.get()) {
 			CexValueData ui = evalRangeForExpr(un->index);
 
-			// If these indices can't alias, continue propogation
+			// If these indices can't alias, continue propagation
 			if (!ui.mayEqual(index))
 				continue;
 
-			// Otherwise if we know they alias, propogate into the write value.
+			// Otherwise if we know they alias, propagate into the write value.
 			if (ui.mustEqual(index) || re->index == un->index)
 				propogateExactValues(un->value, range);
 			return;
@@ -929,11 +929,11 @@ void propogateExactValues(ref<Expr> e, CexValueData range) {
 				if (CE->getWidth() <= 64) {
 					uint64_t value = CE->getZExtValue();
 					if (range.min()) {
-						// If the equality is true, then propogate the value.
+						// If the equality is true, then propagate the value.
 						propogateExactValue(be->right, value);
 					} else {
 						// If the equality is false and the comparison is of booleans,
-						// then we can infer the value to propogate.
+						// then we can infer the value to propagate.
 						if (be->right->getWidth() == Expr::Bool)
 							propogateExactValue(be->right, !value);
 					}
@@ -1035,20 +1035,20 @@ FastCexSolver::FastCexSolver() {
 FastCexSolver::~FastCexSolver() {
 }
 
-/// propogateValues - Propogate value ranges for the given query and return the
-/// propogation results.
+/// propogateValues - Propagate value ranges for the given query and return the
+/// propagation results.
 ///
-/// \param query - The query to propogate values for.
+/// \param query - The query to propagate values for.
 ///
-/// \param cd - The initial object values resulting from the propogation.
+/// \param cd - The initial object values resulting from the propagation.
 ///
 /// \param checkExpr - Include the query expression in the constraints to
-/// propogate.
+/// propagate.
 ///
-/// \param isValid - If the propogation succeeds (returns true), whether the
+/// \param isValid - If the propagation succeeds (returns true), whether the
 /// constraints were proven valid or invalid.
 ///
-/// \return - True if the propogation was able to prove validity or invalidity.
+/// \return - True if the propagation was able to prove validity or invalidity.
 static bool propogateValues(const Query &query, CexData &cd, bool checkExpr,
                             bool &isValid) {
 	for (const auto &constraint : query.constraints) {
@@ -1114,7 +1114,7 @@ bool FastCexSolver::computeValue(const Query &query, ref<Expr> &result) {
 	bool isValid;
 	bool success = propogateValues(query, cd, false, isValid);
 
-	// Check if propogation wasn't able to determine anything.
+	// Check if propagation wasn't able to determine anything.
 	if (!success)
 		return false;
 
@@ -1122,7 +1122,7 @@ bool FastCexSolver::computeValue(const Query &query, ref<Expr> &result) {
 	if (isValid)
 		return false;
 
-	// Propogation found a satisfying assignment, evaluate the expression.
+	// Propagation found a satisfying assignment, evaluate the expression.
 	ref<Expr> value = cd.evaluatePossible(query.expr);
 
 	if (isa<ConstantExpr>(value)) {
@@ -1142,7 +1142,7 @@ bool FastCexSolver::computeInitialValues(
 	bool isValid;
 	bool success = propogateValues(query, cd, true, isValid);
 
-	// Check if propogation wasn't able to determine anything.
+	// Check if propagation wasn't able to determine anything.
 	if (!success)
 		return false;
 
@@ -1150,7 +1150,7 @@ bool FastCexSolver::computeInitialValues(
 	if (!hasSolution)
 		return true;
 
-	// Propogation found a satisfying assignment, compute the initial values.
+	// Propagation found a satisfying assignment, compute the initial values.
 	for (unsigned i = 0; i != objects.size(); ++i) {
 		const Array *array = objects[i];
 		assert(array);

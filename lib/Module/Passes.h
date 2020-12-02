@@ -30,7 +30,7 @@ class Type;
 
 namespace klee {
 
-/// RaiseAsmPass - This pass raises some common occurences of inline
+/// RaiseAsmPass - This pass raises some common occurrences of inline
 /// asm which are used by glibc into normal LLVM IR.
 class RaiseAsmPass : public llvm::ModulePass {
 static char ID;

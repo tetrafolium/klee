@@ -195,7 +195,7 @@ char *Z3SolverImpl::getConstraintLog(const Query &query) {
 
 	::Z3_string result = Z3_benchmark_to_smtlib_string(
 		temp_builder.ctx,
-		/*name=*/ "Emited by klee::Z3SolverImpl::getConstraintLog()",
+		/*name=*/ "Emitted by klee::Z3SolverImpl::getConstraintLog()",
 		/*logic=*/ "",
 		/*status=*/ "unknown",
 		/*attributes=*/ "",

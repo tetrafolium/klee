@@ -105,7 +105,7 @@ enum SMTLIBboolValues {
 
 enum ConstantDisplayMode {
 	BINARY, ///< Display bit vector constants in binary e.g. #b00101101
-	HEX, ///< Display bit vector constants in Hexidecimal e.g.#x2D
+	HEX, ///< Display bit vector constants in Hexadecimal e.g.#x2D
 	DECIMAL ///< Display bit vector constants in Decimal e.g. (_ bv45 8)
 };
 
