@@ -10,10 +10,10 @@
 #include <stdlib.h>
 
 void *mempcpy(void *destaddr, void const *srcaddr, size_t len) {
-    char *dest = destaddr;
-    char const *src = srcaddr;
+  char *dest = destaddr;
+  char const *src = srcaddr;
 
-    while (len-- > 0)
-        *dest++ = *src++;
-    return dest;
+  while (len-- > 0)
+    *dest++ = *src++;
+  return dest;
 }

@@ -27,39 +27,39 @@ using PTreeNodePtr = llvm::PointerIntPair<PTreeNode *, PtrBitCount, uint8_t>;
 
 class PTreeNode {
 public:
-    PTreeNode *parent = nullptr;
+  PTreeNode *parent = nullptr;
 
-    PTreeNodePtr left;
-    PTreeNodePtr right;
-    ExecutionState *state = nullptr;
+  PTreeNodePtr left;
+  PTreeNodePtr right;
+  ExecutionState *state = nullptr;
 
-    PTreeNode(const PTreeNode&) = delete;
-    PTreeNode(PTreeNode *parent, ExecutionState *state);
-    ~PTreeNode() = default;
+  PTreeNode(const PTreeNode &) = delete;
+  PTreeNode(PTreeNode *parent, ExecutionState *state);
+  ~PTreeNode() = default;
 };
 
 class PTree {
-    // Number of registered ID
-    int registeredIds = 0;
+  // Number of registered ID
+  int registeredIds = 0;
 
 public:
-    PTreeNodePtr root;
-    explicit PTree(ExecutionState *initialState);
-    ~PTree() = default;
+  PTreeNodePtr root;
+  explicit PTree(ExecutionState *initialState);
+  ~PTree() = default;
 
-    void attach(PTreeNode *node, ExecutionState *leftState,
-                ExecutionState *rightState);
-    static void remove(PTreeNode *node);
-    void dump(llvm::raw_ostream &os);
-    std::uint8_t getNextId() {
-        std::uint8_t id = 1 << registeredIds++;
-        if (registeredIds > PtrBitCount) {
-            klee_error("PTree cannot support more than %d RandomPathSearchers",
-                       PtrBitCount);
-        }
-        return id;
+  void attach(PTreeNode *node, ExecutionState *leftState,
+              ExecutionState *rightState);
+  static void remove(PTreeNode *node);
+  void dump(llvm::raw_ostream &os);
+  std::uint8_t getNextId() {
+    std::uint8_t id = 1 << registeredIds++;
+    if (registeredIds > PtrBitCount) {
+      klee_error("PTree cannot support more than %d RandomPathSearchers",
+                 PtrBitCount);
     }
+    return id;
+  }
 };
-}
+} // namespace klee
 
 #endif /* KLEE_PTREE_H */

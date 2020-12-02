@@ -46,20 +46,20 @@ extern llvm::cl::opt<bool> UseAssignmentValidatingSolver;
 
 /// The different query logging solvers that can be switched on/off
 enum QueryLoggingSolverType {
-    ALL_KQUERY,    ///< Log all queries in .kquery (KQuery) format
-    ALL_SMTLIB,    ///< Log all queries .smt2 (SMT-LIBv2) format
-    SOLVER_KQUERY, ///< Log queries passed to solver in .kquery (KQuery) format
-    SOLVER_SMTLIB  ///< Log queries passed to solver in .smt2 (SMT-LIBv2) format
+  ALL_KQUERY,    ///< Log all queries in .kquery (KQuery) format
+  ALL_SMTLIB,    ///< Log all queries .smt2 (SMT-LIBv2) format
+  SOLVER_KQUERY, ///< Log queries passed to solver in .kquery (KQuery) format
+  SOLVER_SMTLIB  ///< Log queries passed to solver in .smt2 (SMT-LIBv2) format
 };
 
 extern llvm::cl::bits<QueryLoggingSolverType> QueryLoggingOptions;
 
 enum CoreSolverType {
-    STP_SOLVER,
-    METASMT_SOLVER,
-    DUMMY_SOLVER,
-    Z3_SOLVER,
-    NO_SOLVER
+  STP_SOLVER,
+  METASMT_SOLVER,
+  DUMMY_SOLVER,
+  Z3_SOLVER,
+  NO_SOLVER
 };
 
 extern llvm::cl::opt<CoreSolverType> CoreSolverToUse;
@@ -69,11 +69,11 @@ extern llvm::cl::opt<CoreSolverType> DebugCrossCheckCoreSolverWith;
 #ifdef ENABLE_METASMT
 
 enum MetaSMTBackendType {
-    METASMT_BACKEND_STP,
-    METASMT_BACKEND_Z3,
-    METASMT_BACKEND_BOOLECTOR,
-    METASMT_BACKEND_CVC4,
-    METASMT_BACKEND_YICES2
+  METASMT_BACKEND_STP,
+  METASMT_BACKEND_Z3,
+  METASMT_BACKEND_BOOLECTOR,
+  METASMT_BACKEND_CVC4,
+  METASMT_BACKEND_YICES2
 };
 
 extern llvm::cl::opt<klee::MetaSMTBackendType> MetaSMTBackend;
@@ -82,11 +82,11 @@ extern llvm::cl::opt<klee::MetaSMTBackendType> MetaSMTBackend;
 
 class KCommandLine {
 public:
-    /// Hide all options in the specified category
-    static void HideOptions(llvm::cl::OptionCategory &Category);
+  /// Hide all options in the specified category
+  static void HideOptions(llvm::cl::OptionCategory &Category);
 
-    /// Hide all options except the ones in the specified category
-    static void HideUnrelatedOptions(llvm::cl::OptionCategory &Category);
+  /// Hide all options except the ones in the specified category
+  static void HideUnrelatedOptions(llvm::cl::OptionCategory &Category);
 };
 } // namespace klee
 

@@ -43,18 +43,19 @@ cl::opt<bool> UseFastCexSolver(
     cl::desc("Enable an experimental range-based solver (default=false)"),
     cl::cat(SolvingCat));
 
-cl::opt<bool> UseCexCache("use-cex-cache", cl::init(true),
-                          cl::desc("Use the counterexample cache (default=true)"),
-                          cl::cat(SolvingCat));
+cl::opt<bool>
+    UseCexCache("use-cex-cache", cl::init(true),
+                cl::desc("Use the counterexample cache (default=true)"),
+                cl::cat(SolvingCat));
 
 cl::opt<bool> UseBranchCache("use-branch-cache", cl::init(true),
                              cl::desc("Use the branch cache (default=true)"),
                              cl::cat(SolvingCat));
 
 cl::opt<bool>
-UseIndependentSolver("use-independent-solver", cl::init(true),
-                     cl::desc("Use constraint independence (default=true)"),
-                     cl::cat(SolvingCat));
+    UseIndependentSolver("use-independent-solver", cl::init(true),
+                         cl::desc("Use constraint independence (default=true)"),
+                         cl::cat(SolvingCat));
 
 cl::opt<bool> DebugValidateSolver(
     "debug-validate-solver", cl::init(false),
@@ -69,14 +70,15 @@ cl::opt<std::string> MinQueryTimeToLog(
     cl::cat(SolvingCat));
 
 cl::opt<bool>
-LogTimedOutQueries("log-timed-out-queries", cl::init(true),
-                   cl::desc("Log queries that timed out. (default=true)."),
-                   cl::cat(SolvingCat));
+    LogTimedOutQueries("log-timed-out-queries", cl::init(true),
+                       cl::desc("Log queries that timed out. (default=true)."),
+                       cl::cat(SolvingCat));
 
 cl::opt<std::string> MaxCoreSolverTime(
     "max-solver-time",
-    cl::desc("Maximum amount of time for a single SMT query (default=0s (off)). "
-             "Enables --use-forked-solver"),
+    cl::desc(
+        "Maximum amount of time for a single SMT query (default=0s (off)). "
+        "Enables --use-forked-solver"),
     cl::cat(SolvingCat));
 
 cl::opt<bool> UseForkedCoreSolver(
@@ -105,7 +107,7 @@ cl::bits<QueryLoggingSolverType> QueryLoggingOptions(
         clEnumValN(
             SOLVER_SMTLIB, "solver:smt2",
             "All queries reaching the solver in .smt2 (SMT-LIBv2) format")
-        KLEE_LLVM_CL_VAL_END),
+            KLEE_LLVM_CL_VAL_END),
     cl::CommaSeparated, cl::cat(SolvingCat));
 
 cl::opt<bool> UseAssignmentValidatingSolver(
@@ -113,23 +115,22 @@ cl::opt<bool> UseAssignmentValidatingSolver(
     cl::desc("Debug the correctness of generated assignments (default=false)"),
     cl::cat(SolvingCat));
 
-
 void KCommandLine::HideOptions(llvm::cl::OptionCategory &Category) {
-    StringMap<cl::Option *> &map = cl::getRegisteredOptions();
+  StringMap<cl::Option *> &map = cl::getRegisteredOptions();
 
-    for (auto &elem : map) {
+  for (auto &elem : map) {
 #if LLVM_VERSION_CODE >= LLVM_VERSION(9, 0)
-        for (auto &cat : elem.second->Categories) {
+    for (auto &cat : elem.second->Categories) {
 #else
-        {
-            auto &cat = elem.second->Category;
+    {
+      auto &cat = elem.second->Category;
 #endif
-            if (cat == &Category) {
-                elem.second->setHiddenFlag(cl::Hidden);
-            }
-        }
+      if (cat == &Category) {
+        elem.second->setHiddenFlag(cl::Hidden);
+      }
     }
-}
+  }
+} // namespace klee
 
 #ifdef ENABLE_METASMT
 
@@ -150,18 +151,19 @@ void KCommandLine::HideOptions(llvm::cl::OptionCategory &Category) {
 #define METASMT_DEFAULT_BACKEND METASMT_BACKEND_STP
 #endif
 
-cl::opt<klee::MetaSMTBackendType>
-MetaSMTBackend("metasmt-backend",
-               cl::desc("Specify the MetaSMT solver backend type " METASMT_DEFAULT_BACKEND_STR),
-               cl::values(clEnumValN(METASMT_BACKEND_STP, "stp", "Use metaSMT with STP"),
-                          clEnumValN(METASMT_BACKEND_Z3, "z3", "Use metaSMT with Z3"),
-                          clEnumValN(METASMT_BACKEND_BOOLECTOR, "btor",
-                                     "Use metaSMT with Boolector"),
-                          clEnumValN(METASMT_BACKEND_CVC4, "cvc4", "Use metaSMT with CVC4"),
-                          clEnumValN(METASMT_BACKEND_YICES2, "yices2", "Use metaSMT with Yices2")
-                          KLEE_LLVM_CL_VAL_END),
-               cl::init(METASMT_DEFAULT_BACKEND),
-               cl::cat(SolvingCat));
+cl::opt<klee::MetaSMTBackendType> MetaSMTBackend(
+    "metasmt-backend",
+    cl::desc(
+        "Specify the MetaSMT solver backend type " METASMT_DEFAULT_BACKEND_STR),
+    cl::values(clEnumValN(METASMT_BACKEND_STP, "stp", "Use metaSMT with STP"),
+               clEnumValN(METASMT_BACKEND_Z3, "z3", "Use metaSMT with Z3"),
+               clEnumValN(METASMT_BACKEND_BOOLECTOR, "btor",
+                          "Use metaSMT with Boolector"),
+               clEnumValN(METASMT_BACKEND_CVC4, "cvc4",
+                          "Use metaSMT with CVC4"),
+               clEnumValN(METASMT_BACKEND_YICES2, "yices2",
+                          "Use metaSMT with Yices2") KLEE_LLVM_CL_VAL_END),
+    cl::init(METASMT_DEFAULT_BACKEND), cl::cat(SolvingCat));
 
 #undef METASMT_DEFAULT_BACKEND
 #undef METASMT_DEFAULT_BACKEND_STR
@@ -196,19 +198,19 @@ cl::opt<CoreSolverType> CoreSolverToUse(
                           "metaSMT" METASMT_IS_DEFAULT_STR),
                clEnumValN(DUMMY_SOLVER, "dummy", "Dummy solver"),
                clEnumValN(Z3_SOLVER, "z3", "Z3" Z3_IS_DEFAULT_STR)
-               KLEE_LLVM_CL_VAL_END),
+                   KLEE_LLVM_CL_VAL_END),
     cl::init(DEFAULT_CORE_SOLVER), cl::cat(SolvingCat));
 
 cl::opt<CoreSolverType> DebugCrossCheckCoreSolverWith(
     "debug-crosscheck-core-solver",
-    cl::desc(
-        "Specifiy a solver to use for crosschecking the results of the core solver"),
+    cl::desc("Specifiy a solver to use for crosschecking the results of the "
+             "core solver"),
     cl::values(clEnumValN(STP_SOLVER, "stp", "STP"),
                clEnumValN(METASMT_SOLVER, "metasmt", "metaSMT"),
                clEnumValN(DUMMY_SOLVER, "dummy", "Dummy solver"),
                clEnumValN(Z3_SOLVER, "z3", "Z3"),
                clEnumValN(NO_SOLVER, "none", "Do not crosscheck (default)")
-               KLEE_LLVM_CL_VAL_END),
+                   KLEE_LLVM_CL_VAL_END),
     cl::init(NO_SOLVER), cl::cat(SolvingCat));
 } // namespace klee
 

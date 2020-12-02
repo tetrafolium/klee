@@ -31,7 +31,7 @@ extern Statistic queryTime;
 extern Statistic arrayHashTime;
 #endif
 
-}
-}
+} // namespace stats
+} // namespace klee
 
 #endif /* KLEE_SOLVERSTATS_H */

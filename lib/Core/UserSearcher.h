@@ -20,6 +20,6 @@ bool userSearcherRequiresMD2U();
 void initializeSearchOptions();
 
 Searcher *constructUserSearcher(Executor &executor);
-}
+} // namespace klee
 
 #endif /* KLEE_USERSEARCHER_H */

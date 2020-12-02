@@ -18,27 +18,24 @@
 namespace klee {
 
 namespace util {
-struct ExprHash  {
-    unsigned operator()(const ref<Expr> &e) const {
-        return e->hash();
-    }
+struct ExprHash {
+  unsigned operator()(const ref<Expr> &e) const { return e->hash(); }
 };
 
 struct ExprCmp {
-    bool operator()(const ref<Expr> &a, const ref<Expr> &b) const {
-        return a==b;
-    }
+  bool operator()(const ref<Expr> &a, const ref<Expr> &b) const {
+    return a == b;
+  }
 };
-}
+} // namespace util
 
 template <class T>
 class ExprHashMap
     : public std::unordered_map<ref<Expr>, T, klee::util::ExprHash,
-      klee::util::ExprCmp> {};
+                                klee::util::ExprCmp> {};
 
-typedef std::unordered_set<ref<Expr>, klee::util::ExprHash,
-        klee::util::ExprCmp>
-        ExprHashSet;
+typedef std::unordered_set<ref<Expr>, klee::util::ExprHash, klee::util::ExprCmp>
+    ExprHashSet;
 } // namespace klee
 
 #endif /* KLEE_EXPRHASHMAP_H */

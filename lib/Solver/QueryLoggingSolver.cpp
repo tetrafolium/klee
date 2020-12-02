@@ -9,10 +9,10 @@
 #include "QueryLoggingSolver.h"
 
 #include "klee/Config/config.h"
-#include "klee/Support/OptionCategories.h"
 #include "klee/Statistics/Statistics.h"
 #include "klee/Support/ErrorHandling.h"
 #include "klee/Support/FileHandling.h"
+#include "klee/Support/OptionCategories.h"
 #include "klee/System/Time.h"
 
 namespace {
@@ -36,183 +36,182 @@ QueryLoggingSolver::QueryLoggingSolver(Solver *_solver, std::string path,
     : solver(_solver), BufferString(""), logBuffer(BufferString), queryCount(0),
       minQueryTimeToLog(queryTimeToLog), logTimedOutQueries(logTimedOut),
       queryCommentSign(commentSign) {
-    std::string error;
+  std::string error;
 #ifdef HAVE_ZLIB_H
-    if (!CreateCompressedQueryLog) {
+  if (!CreateCompressedQueryLog) {
 #endif
-        os = klee_open_output_file(path, error);
+    os = klee_open_output_file(path, error);
 #ifdef HAVE_ZLIB_H
-    } else {
-        path.append(".gz");
-        os = klee_open_compressed_output_file(path, error);
-    }
+  } else {
+    path.append(".gz");
+    os = klee_open_compressed_output_file(path, error);
+  }
 #endif
-    if (!os) {
-        klee_error("Could not open file %s : %s", path.c_str(), error.c_str());
-    }
-    assert(0 != solver);
+  if (!os) {
+    klee_error("Could not open file %s : %s", path.c_str(), error.c_str());
+  }
+  assert(0 != solver);
 }
 
-QueryLoggingSolver::~QueryLoggingSolver() {
-    delete solver;
-}
+QueryLoggingSolver::~QueryLoggingSolver() { delete solver; }
 
 void QueryLoggingSolver::flushBufferConditionally(bool writeToFile) {
-    logBuffer.flush();
-    if (writeToFile) {
-        *os << logBuffer.str();
-        os->flush();
-    }
-    // prepare the buffer for reuse
-    BufferString = "";
+  logBuffer.flush();
+  if (writeToFile) {
+    *os << logBuffer.str();
+    os->flush();
+  }
+  // prepare the buffer for reuse
+  BufferString = "";
 }
 
 void QueryLoggingSolver::startQuery(const Query &query, const char *typeName,
                                     const Query *falseQuery,
                                     const std::vector<const Array *> *objects) {
-    Statistic *S = theStatisticManager->getStatisticByName("Instructions");
-    uint64_t instructions = S ? S->getValue() : 0;
+  Statistic *S = theStatisticManager->getStatisticByName("Instructions");
+  uint64_t instructions = S ? S->getValue() : 0;
 
-    logBuffer << queryCommentSign << " Query " << queryCount++ << " -- "
-              << "Type: " << typeName << ", "
-              << "Instructions: " << instructions << "\n";
+  logBuffer << queryCommentSign << " Query " << queryCount++ << " -- "
+            << "Type: " << typeName << ", "
+            << "Instructions: " << instructions << "\n";
 
-    printQuery(query, falseQuery, objects);
+  printQuery(query, falseQuery, objects);
 
-    if (DumpPartialQueryiesEarly) {
-        flushBufferConditionally(true);
-    }
-    startTime = time::getWallTime();
+  if (DumpPartialQueryiesEarly) {
+    flushBufferConditionally(true);
+  }
+  startTime = time::getWallTime();
 }
 
 void QueryLoggingSolver::finishQuery(bool success) {
-    lastQueryDuration = time::getWallTime() - startTime;
-    logBuffer << queryCommentSign << "   " << (success ? "OK" : "FAIL") << " -- "
-              << "Elapsed: " << lastQueryDuration << "\n";
+  lastQueryDuration = time::getWallTime() - startTime;
+  logBuffer << queryCommentSign << "   " << (success ? "OK" : "FAIL") << " -- "
+            << "Elapsed: " << lastQueryDuration << "\n";
 
-    if (false == success) {
-        logBuffer << queryCommentSign << "   Failure reason: "
-                  << SolverImpl::getOperationStatusString(
-                      solver->impl->getOperationStatusCode()) << "\n";
-    }
+  if (false == success) {
+    logBuffer << queryCommentSign << "   Failure reason: "
+              << SolverImpl::getOperationStatusString(
+                     solver->impl->getOperationStatusCode())
+              << "\n";
+  }
 }
 
 void QueryLoggingSolver::flushBuffer() {
-    // we either do not limit logging queries
-    // or the query time is larger than threshold
-    // or we log a timed out query
-    bool writeToFile = (!minQueryTimeToLog)
-                       || (lastQueryDuration > minQueryTimeToLog)
-                       || (logTimedOutQueries &&
-                           (SOLVER_RUN_STATUS_TIMEOUT == solver->impl->getOperationStatusCode()));
+  // we either do not limit logging queries
+  // or the query time is larger than threshold
+  // or we log a timed out query
+  bool writeToFile =
+      (!minQueryTimeToLog) || (lastQueryDuration > minQueryTimeToLog) ||
+      (logTimedOutQueries &&
+       (SOLVER_RUN_STATUS_TIMEOUT == solver->impl->getOperationStatusCode()));
 
-    flushBufferConditionally(writeToFile);
+  flushBufferConditionally(writeToFile);
 }
 
 bool QueryLoggingSolver::computeTruth(const Query &query, bool &isValid) {
-    startQuery(query, "Truth");
+  startQuery(query, "Truth");
 
-    bool success = solver->impl->computeTruth(query, isValid);
+  bool success = solver->impl->computeTruth(query, isValid);
 
-    finishQuery(success);
+  finishQuery(success);
 
-    if (success) {
-        logBuffer << queryCommentSign
-                  << "   Is Valid: " << (isValid ? "true" : "false") << "\n";
-    }
-    logBuffer << "\n";
+  if (success) {
+    logBuffer << queryCommentSign
+              << "   Is Valid: " << (isValid ? "true" : "false") << "\n";
+  }
+  logBuffer << "\n";
 
-    flushBuffer();
+  flushBuffer();
 
-    return success;
+  return success;
 }
 
 bool QueryLoggingSolver::computeValidity(const Query &query,
-        Solver::Validity &result) {
-    startQuery(query, "Validity");
+                                         Solver::Validity &result) {
+  startQuery(query, "Validity");
 
-    bool success = solver->impl->computeValidity(query, result);
+  bool success = solver->impl->computeValidity(query, result);
 
-    finishQuery(success);
+  finishQuery(success);
 
-    if (success) {
-        logBuffer << queryCommentSign << "   Validity: " << result << "\n";
-    }
-    logBuffer << "\n";
+  if (success) {
+    logBuffer << queryCommentSign << "   Validity: " << result << "\n";
+  }
+  logBuffer << "\n";
 
-    flushBuffer();
+  flushBuffer();
 
-    return success;
+  return success;
 }
 
 bool QueryLoggingSolver::computeValue(const Query &query, ref<Expr> &result) {
-    Query withFalse = query.withFalse();
-    startQuery(query, "Value", &withFalse);
+  Query withFalse = query.withFalse();
+  startQuery(query, "Value", &withFalse);
 
-    bool success = solver->impl->computeValue(query, result);
+  bool success = solver->impl->computeValue(query, result);
 
-    finishQuery(success);
+  finishQuery(success);
 
-    if (success) {
-        logBuffer << queryCommentSign << "   Result: " << result << "\n";
-    }
-    logBuffer << "\n";
+  if (success) {
+    logBuffer << queryCommentSign << "   Result: " << result << "\n";
+  }
+  logBuffer << "\n";
 
-    flushBuffer();
+  flushBuffer();
 
-    return success;
+  return success;
 }
 
 bool QueryLoggingSolver::computeInitialValues(
     const Query &query, const std::vector<const Array *> &objects,
-    std::vector<std::vector<unsigned char> > &values, bool &hasSolution) {
-    startQuery(query, "InitialValues", 0, &objects);
+    std::vector<std::vector<unsigned char>> &values, bool &hasSolution) {
+  startQuery(query, "InitialValues", 0, &objects);
 
-    bool success =
-        solver->impl->computeInitialValues(query, objects, values, hasSolution);
+  bool success =
+      solver->impl->computeInitialValues(query, objects, values, hasSolution);
 
-    finishQuery(success);
+  finishQuery(success);
 
-    if (success) {
-        logBuffer << queryCommentSign
-                  << "   Solvable: " << (hasSolution ? "true" : "false") << "\n";
-        if (hasSolution) {
-            std::vector<std::vector<unsigned char> >::iterator values_it =
-                values.begin();
+  if (success) {
+    logBuffer << queryCommentSign
+              << "   Solvable: " << (hasSolution ? "true" : "false") << "\n";
+    if (hasSolution) {
+      std::vector<std::vector<unsigned char>>::iterator values_it =
+          values.begin();
 
-            for (std::vector<const Array *>::const_iterator i = objects.begin(),
-                    e = objects.end();
-                    i != e; ++i, ++values_it) {
-                const Array *array = *i;
-                std::vector<unsigned char> &data = *values_it;
-                logBuffer << queryCommentSign << "     " << array->name << " = [";
+      for (std::vector<const Array *>::const_iterator i = objects.begin(),
+                                                      e = objects.end();
+           i != e; ++i, ++values_it) {
+        const Array *array = *i;
+        std::vector<unsigned char> &data = *values_it;
+        logBuffer << queryCommentSign << "     " << array->name << " = [";
 
-                for (unsigned j = 0; j < array->size; j++) {
-                    logBuffer << (int)data[j];
+        for (unsigned j = 0; j < array->size; j++) {
+          logBuffer << (int)data[j];
 
-                    if (j + 1 < array->size) {
-                        logBuffer << ",";
-                    }
-                }
-                logBuffer << "]\n";
-            }
+          if (j + 1 < array->size) {
+            logBuffer << ",";
+          }
         }
+        logBuffer << "]\n";
+      }
     }
-    logBuffer << "\n";
+  }
+  logBuffer << "\n";
 
-    flushBuffer();
+  flushBuffer();
 
-    return success;
+  return success;
 }
 
 SolverImpl::SolverRunStatus QueryLoggingSolver::getOperationStatusCode() {
-    return solver->impl->getOperationStatusCode();
+  return solver->impl->getOperationStatusCode();
 }
 
 char *QueryLoggingSolver::getConstraintLog(const Query &query) {
-    return solver->impl->getConstraintLog(query);
+  return solver->impl->getConstraintLog(query);
 }
 
 void QueryLoggingSolver::setCoreSolverTimeout(time::Span timeout) {
-    solver->impl->setCoreSolverTimeout(timeout);
+  solver->impl->setCoreSolverTimeout(timeout);
 }

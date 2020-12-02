@@ -23,7 +23,7 @@ using namespace klee;
 
 namespace {
 llvm::cl::OptionCategory
-SearchCat("Search options", "These options control the search heuristic.");
+    SearchCat("Search options", "These options control the search heuristic.");
 
 cl::list<Searcher::CoreSearchType> CoreSearch(
     "search",
@@ -49,142 +49,145 @@ cl::list<Searcher::CoreSearchType> CoreSearch(
         clEnumValN(Searcher::NURS_CPICnt, "nurs:cpicnt",
                    "use NURS with CallPath-Instr-Count"),
         clEnumValN(Searcher::NURS_QC, "nurs:qc", "use NURS with Query-Cost")
-        KLEE_LLVM_CL_VAL_END),
+            KLEE_LLVM_CL_VAL_END),
     cl::cat(SearchCat));
 
 cl::opt<bool> UseIterativeDeepeningTimeSearch(
     "use-iterative-deepening-time-search",
     cl::desc(
         "Use iterative deepening time search (experimental) (default=false)"),
-    cl::init(false),
-    cl::cat(SearchCat));
+    cl::init(false), cl::cat(SearchCat));
 
 cl::opt<bool> UseBatchingSearch(
     "use-batching-search",
     cl::desc("Use batching searcher (keep running selected state for N "
              "instructions/time, see --batch-instructions and --batch-time) "
              "(default=false)"),
-    cl::init(false),
-    cl::cat(SearchCat));
+    cl::init(false), cl::cat(SearchCat));
 
 cl::opt<unsigned> BatchInstructions(
     "batch-instructions",
     cl::desc("Number of instructions to batch when using "
              "--use-batching-search.  Set to 0 to disable (default=10000)"),
-    cl::init(10000),
-    cl::cat(SearchCat));
+    cl::init(10000), cl::cat(SearchCat));
 
 cl::opt<std::string> BatchTime(
     "batch-time",
     cl::desc("Amount of time to batch when using "
              "--use-batching-search.  Set to 0s to disable (default=5s)"),
-    cl::init("5s"),
-    cl::cat(SearchCat));
+    cl::init("5s"), cl::cat(SearchCat));
 
 } // namespace
 
 void klee::initializeSearchOptions() {
-    // default values
-    if (CoreSearch.empty()) {
-        if (UseMerge) {
-            CoreSearch.push_back(Searcher::NURS_CovNew);
-            klee_warning("--use-merge enabled. Using NURS_CovNew as default searcher.");
-        } else {
-            CoreSearch.push_back(Searcher::RandomPath);
-            CoreSearch.push_back(Searcher::NURS_CovNew);
-        }
+  // default values
+  if (CoreSearch.empty()) {
+    if (UseMerge) {
+      CoreSearch.push_back(Searcher::NURS_CovNew);
+      klee_warning(
+          "--use-merge enabled. Using NURS_CovNew as default searcher.");
+    } else {
+      CoreSearch.push_back(Searcher::RandomPath);
+      CoreSearch.push_back(Searcher::NURS_CovNew);
     }
+  }
 }
 
 bool klee::userSearcherRequiresMD2U() {
-    return (std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::NURS_MD2U) != CoreSearch.end() ||
-            std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::NURS_CovNew) != CoreSearch.end() ||
-            std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::NURS_ICnt) != CoreSearch.end() ||
-            std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::NURS_CPICnt) != CoreSearch.end() ||
-            std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::NURS_QC) != CoreSearch.end());
+  return (std::find(CoreSearch.begin(), CoreSearch.end(),
+                    Searcher::NURS_MD2U) != CoreSearch.end() ||
+          std::find(CoreSearch.begin(), CoreSearch.end(),
+                    Searcher::NURS_CovNew) != CoreSearch.end() ||
+          std::find(CoreSearch.begin(), CoreSearch.end(),
+                    Searcher::NURS_ICnt) != CoreSearch.end() ||
+          std::find(CoreSearch.begin(), CoreSearch.end(),
+                    Searcher::NURS_CPICnt) != CoreSearch.end() ||
+          std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::NURS_QC) !=
+              CoreSearch.end());
 }
 
 Searcher *getNewSearcher(Searcher::CoreSearchType type, PTree &processTree) {
-    Searcher *searcher = NULL;
-    switch (type) {
-    case Searcher::DFS:
-        searcher = new DFSSearcher();
-        break;
-    case Searcher::BFS:
-        searcher = new BFSSearcher();
-        break;
-    case Searcher::RandomState:
-        searcher = new RandomSearcher();
-        break;
-    case Searcher::RandomPath:
-        searcher = new RandomPathSearcher(processTree);
-        break;
-    case Searcher::NURS_CovNew:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::CoveringNew);
-        break;
-    case Searcher::NURS_MD2U:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::MinDistToUncovered);
-        break;
-    case Searcher::NURS_Depth:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::Depth);
-        break;
-    case Searcher::NURS_RP:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::RP);
-        break;
-    case Searcher::NURS_ICnt:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::InstCount);
-        break;
-    case Searcher::NURS_CPICnt:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::CPInstCount);
-        break;
-    case Searcher::NURS_QC:
-        searcher = new WeightedRandomSearcher(WeightedRandomSearcher::QueryCost);
-        break;
-    }
+  Searcher *searcher = NULL;
+  switch (type) {
+  case Searcher::DFS:
+    searcher = new DFSSearcher();
+    break;
+  case Searcher::BFS:
+    searcher = new BFSSearcher();
+    break;
+  case Searcher::RandomState:
+    searcher = new RandomSearcher();
+    break;
+  case Searcher::RandomPath:
+    searcher = new RandomPathSearcher(processTree);
+    break;
+  case Searcher::NURS_CovNew:
+    searcher = new WeightedRandomSearcher(WeightedRandomSearcher::CoveringNew);
+    break;
+  case Searcher::NURS_MD2U:
+    searcher =
+        new WeightedRandomSearcher(WeightedRandomSearcher::MinDistToUncovered);
+    break;
+  case Searcher::NURS_Depth:
+    searcher = new WeightedRandomSearcher(WeightedRandomSearcher::Depth);
+    break;
+  case Searcher::NURS_RP:
+    searcher = new WeightedRandomSearcher(WeightedRandomSearcher::RP);
+    break;
+  case Searcher::NURS_ICnt:
+    searcher = new WeightedRandomSearcher(WeightedRandomSearcher::InstCount);
+    break;
+  case Searcher::NURS_CPICnt:
+    searcher = new WeightedRandomSearcher(WeightedRandomSearcher::CPInstCount);
+    break;
+  case Searcher::NURS_QC:
+    searcher = new WeightedRandomSearcher(WeightedRandomSearcher::QueryCost);
+    break;
+  }
 
-    return searcher;
+  return searcher;
 }
 
 Searcher *klee::constructUserSearcher(Executor &executor) {
 
-    Searcher *searcher = getNewSearcher(CoreSearch[0], *executor.processTree);
-    if (CoreSearch.size() > 1) {
-        std::vector<Searcher *> s;
-        s.push_back(searcher);
+  Searcher *searcher = getNewSearcher(CoreSearch[0], *executor.processTree);
+  if (CoreSearch.size() > 1) {
+    std::vector<Searcher *> s;
+    s.push_back(searcher);
 
-        for (unsigned i = 1; i < CoreSearch.size(); i++)
-            s.push_back(getNewSearcher(CoreSearch[i], *executor.processTree));
+    for (unsigned i = 1; i < CoreSearch.size(); i++)
+      s.push_back(getNewSearcher(CoreSearch[i], *executor.processTree));
 
-        searcher = new InterleavedSearcher(s);
+    searcher = new InterleavedSearcher(s);
+  }
+
+  if (UseBatchingSearch) {
+    searcher = new BatchingSearcher(searcher, time::Span(BatchTime),
+                                    BatchInstructions);
+  }
+
+  if (UseIterativeDeepeningTimeSearch) {
+    searcher = new IterativeDeepeningTimeSearcher(searcher);
+  }
+
+  if (UseMerge) {
+    if (std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::RandomPath) !=
+        CoreSearch.end()) {
+      klee_error("use-merge currently does not support random-path, please use "
+                 "another search strategy");
     }
 
-    if (UseBatchingSearch) {
-        searcher = new BatchingSearcher(searcher, time::Span(BatchTime),
-                                        BatchInstructions);
-    }
+    auto *ms = new MergingSearcher(searcher);
+    executor.setMergingSearcher(ms);
 
-    if (UseIterativeDeepeningTimeSearch) {
-        searcher = new IterativeDeepeningTimeSearcher(searcher);
-    }
+    searcher = ms;
+  }
 
-    if (UseMerge) {
-        if (std::find(CoreSearch.begin(), CoreSearch.end(), Searcher::RandomPath) !=
-                CoreSearch.end()) {
-            klee_error("use-merge currently does not support random-path, please use "
-                       "another search strategy");
-        }
+  llvm::raw_ostream &os = executor.getHandler().getInfoStream();
 
-        auto *ms = new MergingSearcher(searcher);
-        executor.setMergingSearcher(ms);
+  os << "BEGIN searcher description\n";
+  searcher->printName(os);
+  os << "END searcher description\n";
 
-        searcher = ms;
-    }
-
-    llvm::raw_ostream &os = executor.getHandler().getInfoStream();
-
-    os << "BEGIN searcher description\n";
-    searcher->printName(os);
-    os << "END searcher description\n";
-
-    return searcher;
+  return searcher;
 }

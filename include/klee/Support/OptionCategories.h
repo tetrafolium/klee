@@ -24,6 +24,6 @@ extern llvm::cl::OptionCategory SeedingCat;
 extern llvm::cl::OptionCategory SolvingCat;
 extern llvm::cl::OptionCategory TerminationCat;
 extern llvm::cl::OptionCategory TestGenCat;
-}
+} // namespace klee
 
 #endif /* KLEE_OPTIONCATEGORIES_H */
