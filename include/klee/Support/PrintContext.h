@@ -27,74 +27,74 @@
 /// \sa breakLineI() , \sa pushIndent(), \sa popIndent()
 class PrintContext {
 private:
-  llvm::raw_ostream &os;
-  std::string newline;
+    llvm::raw_ostream &os;
+    std::string newline;
 
-  ///This is used to keep track of the stack of indentations used by
-  /// \sa breakLineI()
-  /// \sa pushIndent()
-  /// \sa popIndent()
-  std::stack<unsigned int> indentStack;
+    ///This is used to keep track of the stack of indentations used by
+    /// \sa breakLineI()
+    /// \sa pushIndent()
+    /// \sa popIndent()
+    std::stack<unsigned int> indentStack;
 
 public:
-  /// Number of characters on the current line.
-  unsigned pos;
+    /// Number of characters on the current line.
+    unsigned pos;
 
-  PrintContext(llvm::raw_ostream &_os) : os(_os), newline("\n"), indentStack(), pos()
-  {
-	  indentStack.push(pos);
-  }
+    PrintContext(llvm::raw_ostream &_os) : os(_os), newline("\n"), indentStack(), pos()
+    {
+        indentStack.push(pos);
+    }
 
-  void setNewline(const std::string &_newline) {
-    newline = _newline;
-  }
+    void setNewline(const std::string &_newline) {
+        newline = _newline;
+    }
 
-  void breakLine(unsigned indent=0) {
-    os << newline;
-    if (indent)
-      os.indent(indent) << ' ';
-    pos = indent;
-  }
+    void breakLine(unsigned indent=0) {
+        os << newline;
+        if (indent)
+            os.indent(indent) << ' ';
+        pos = indent;
+    }
 
-  ///Break line using the indent on the top of the indent stack
-  /// \return The PrintContext object so the method is chainable
-  PrintContext& breakLineI()
-  {
-	  breakLine(indentStack.top());
-	  return *this;
-  }
+    ///Break line using the indent on the top of the indent stack
+    /// \return The PrintContext object so the method is chainable
+    PrintContext& breakLineI()
+    {
+        breakLine(indentStack.top());
+        return *this;
+    }
 
-  ///Add the current position on the line to the top of the indent stack
-  /// \return The PrintContext object so the method is chainable
-  PrintContext& pushIndent()
-  {
-	  indentStack.push(pos);
-	  return *this;
-  }
+    ///Add the current position on the line to the top of the indent stack
+    /// \return The PrintContext object so the method is chainable
+    PrintContext& pushIndent()
+    {
+        indentStack.push(pos);
+        return *this;
+    }
 
-  ///Pop the top off the indent stack
-  /// \return The PrintContext object so the method is chainable
-  PrintContext& popIndent()
-  {
-	  indentStack.pop();
-	  return *this;
-  }
+    ///Pop the top off the indent stack
+    /// \return The PrintContext object so the method is chainable
+    PrintContext& popIndent()
+    {
+        indentStack.pop();
+        return *this;
+    }
 
-  /// write - Output a string to the stream and update the
-  /// position. The stream should not have any newlines.
-  void write(const std::string &s) {
-    os << s;
-    pos += s.length();
-  }
+    /// write - Output a string to the stream and update the
+    /// position. The stream should not have any newlines.
+    void write(const std::string &s) {
+        os << s;
+        pos += s.length();
+    }
 
-  template <typename T>
-  PrintContext &operator<<(T elt) {
-    std::string str;
-    llvm::raw_string_ostream ss(str);
-    ss << elt;
-    write(ss.str());
-    return *this;
-  }
+    template <typename T>
+    PrintContext &operator<<(T elt) {
+        std::string str;
+        llvm::raw_string_ostream ss(str);
+        ss << elt;
+        write(ss.str());
+        return *this;
+    }
 
 };
 

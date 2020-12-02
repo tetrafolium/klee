@@ -52,9 +52,9 @@ cl::opt<bool> UseBranchCache("use-branch-cache", cl::init(true),
                              cl::cat(SolvingCat));
 
 cl::opt<bool>
-    UseIndependentSolver("use-independent-solver", cl::init(true),
-                         cl::desc("Use constraint independence (default=true)"),
-                         cl::cat(SolvingCat));
+UseIndependentSolver("use-independent-solver", cl::init(true),
+                     cl::desc("Use constraint independence (default=true)"),
+                     cl::cat(SolvingCat));
 
 cl::opt<bool> DebugValidateSolver(
     "debug-validate-solver", cl::init(false),
@@ -69,9 +69,9 @@ cl::opt<std::string> MinQueryTimeToLog(
     cl::cat(SolvingCat));
 
 cl::opt<bool>
-    LogTimedOutQueries("log-timed-out-queries", cl::init(true),
-                       cl::desc("Log queries that timed out. (default=true)."),
-                       cl::cat(SolvingCat));
+LogTimedOutQueries("log-timed-out-queries", cl::init(true),
+                   cl::desc("Log queries that timed out. (default=true)."),
+                   cl::cat(SolvingCat));
 
 cl::opt<std::string> MaxCoreSolverTime(
     "max-solver-time",
@@ -105,7 +105,7 @@ cl::bits<QueryLoggingSolverType> QueryLoggingOptions(
         clEnumValN(
             SOLVER_SMTLIB, "solver:smt2",
             "All queries reaching the solver in .smt2 (SMT-LIBv2) format")
-            KLEE_LLVM_CL_VAL_END),
+        KLEE_LLVM_CL_VAL_END),
     cl::CommaSeparated, cl::cat(SolvingCat));
 
 cl::opt<bool> UseAssignmentValidatingSolver(
@@ -115,20 +115,20 @@ cl::opt<bool> UseAssignmentValidatingSolver(
 
 
 void KCommandLine::HideOptions(llvm::cl::OptionCategory &Category) {
-  StringMap<cl::Option *> &map = cl::getRegisteredOptions();
+    StringMap<cl::Option *> &map = cl::getRegisteredOptions();
 
-  for (auto &elem : map) {
+    for (auto &elem : map) {
 #if LLVM_VERSION_CODE >= LLVM_VERSION(9, 0)
-    for (auto &cat : elem.second->Categories) {
+        for (auto &cat : elem.second->Categories) {
 #else
-    {
-      auto &cat = elem.second->Category;
+        {
+            auto &cat = elem.second->Category;
 #endif
-      if (cat == &Category) {
-        elem.second->setHiddenFlag(cl::Hidden);
-      }
+            if (cat == &Category) {
+                elem.second->setHiddenFlag(cl::Hidden);
+            }
+        }
     }
-  }
 }
 
 #ifdef ENABLE_METASMT
@@ -196,7 +196,7 @@ cl::opt<CoreSolverType> CoreSolverToUse(
                           "metaSMT" METASMT_IS_DEFAULT_STR),
                clEnumValN(DUMMY_SOLVER, "dummy", "Dummy solver"),
                clEnumValN(Z3_SOLVER, "z3", "Z3" Z3_IS_DEFAULT_STR)
-                   KLEE_LLVM_CL_VAL_END),
+               KLEE_LLVM_CL_VAL_END),
     cl::init(DEFAULT_CORE_SOLVER), cl::cat(SolvingCat));
 
 cl::opt<CoreSolverType> DebugCrossCheckCoreSolverWith(
@@ -208,7 +208,7 @@ cl::opt<CoreSolverType> DebugCrossCheckCoreSolverWith(
                clEnumValN(DUMMY_SOLVER, "dummy", "Dummy solver"),
                clEnumValN(Z3_SOLVER, "z3", "Z3"),
                clEnumValN(NO_SOLVER, "none", "Do not crosscheck (default)")
-                   KLEE_LLVM_CL_VAL_END),
+               KLEE_LLVM_CL_VAL_END),
     cl::init(NO_SOLVER), cl::cat(SolvingCat));
 } // namespace klee
 

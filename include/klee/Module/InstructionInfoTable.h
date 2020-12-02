@@ -16,36 +16,36 @@
 #include <vector>
 
 namespace llvm {
-  class Function;
-  class Instruction;
-  class Module; 
+class Function;
+class Instruction;
+class Module;
 }
 
 namespace klee {
 
-  /* Stores debug information for a KInstruction */
-  struct InstructionInfo {
+/* Stores debug information for a KInstruction */
+struct InstructionInfo {
     unsigned id;
     const std::string &file;
     unsigned line;
     unsigned column;
     unsigned assemblyLine;
 
-  public:
+public:
     InstructionInfo(unsigned _id, const std::string &_file, unsigned _line,
                     unsigned _column, unsigned _assemblyLine)
         : id(_id), file(_file), line(_line), column(_column),
           assemblyLine(_assemblyLine) {}
-  };
+};
 
-  /* Stores debug information for a KInstruction */
-  struct FunctionInfo {
+/* Stores debug information for a KInstruction */
+struct FunctionInfo {
     unsigned id;
     const std::string &file;
     unsigned line;
     uint64_t assemblyLine;
 
-  public:
+public:
     FunctionInfo(unsigned _id, const std::string &_file, unsigned _line,
                  uint64_t _assemblyLine)
         : id(_id), file(_file), line(_line), assemblyLine(_assemblyLine) {}
@@ -54,23 +54,23 @@ namespace klee {
     FunctionInfo &operator=(FunctionInfo const &) = delete;
 
     FunctionInfo(FunctionInfo &&) = default;
-  };
+};
 
-  class InstructionInfoTable {
+class InstructionInfoTable {
     std::unordered_map<const llvm::Instruction *,
-                       std::unique_ptr<InstructionInfo>>
+        std::unique_ptr<InstructionInfo>>
         infos;
     std::unordered_map<const llvm::Function *, std::unique_ptr<FunctionInfo>>
-        functionInfos;
+            functionInfos;
     std::vector<std::unique_ptr<std::string>> internedStrings;
 
-  public:
+public:
     InstructionInfoTable(const llvm::Module &m);
 
     unsigned getMaxID() const;
     const InstructionInfo &getInfo(const llvm::Instruction &) const;
     const FunctionInfo &getFunctionInfo(const llvm::Function &) const;
-  };
+};
 
 }
 

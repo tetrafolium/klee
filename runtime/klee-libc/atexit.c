@@ -12,5 +12,5 @@ int __cxa_atexit(void (*fn)(void*),
                  void *dso_handle);
 
 int atexit(void (*fn)(void)) {
-  return __cxa_atexit((void(*)(void*)) fn, 0, 0);
+    return __cxa_atexit((void(*)(void*)) fn, 0, 0);
 }

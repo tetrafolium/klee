@@ -17,13 +17,13 @@
 #include "llvm/Support/CommandLine.h"
 
 namespace klee {
-  extern llvm::cl::OptionCategory DebugCat;
-  extern llvm::cl::OptionCategory MergeCat;
-  extern llvm::cl::OptionCategory ModuleCat;
-  extern llvm::cl::OptionCategory SeedingCat;
-  extern llvm::cl::OptionCategory SolvingCat;
-  extern llvm::cl::OptionCategory TerminationCat;
-  extern llvm::cl::OptionCategory TestGenCat;
+extern llvm::cl::OptionCategory DebugCat;
+extern llvm::cl::OptionCategory MergeCat;
+extern llvm::cl::OptionCategory ModuleCat;
+extern llvm::cl::OptionCategory SeedingCat;
+extern llvm::cl::OptionCategory SolvingCat;
+extern llvm::cl::OptionCategory TerminationCat;
+extern llvm::cl::OptionCategory TestGenCat;
 }
 
 #endif /* KLEE_OPTIONCATEGORIES_H */

@@ -27,22 +27,22 @@ namespace klee {
 class ExternalDispatcherImpl;
 class ExternalDispatcher {
 private:
-  ExternalDispatcherImpl *impl;
+    ExternalDispatcherImpl *impl;
 
 public:
-  ExternalDispatcher(llvm::LLVMContext &ctx);
-  ~ExternalDispatcher();
+    ExternalDispatcher(llvm::LLVMContext &ctx);
+    ~ExternalDispatcher();
 
-  /* Call the given function using the parameter passing convention of
-   * ci with arguments in args[1], args[2], ... and writing the result
-   * into args[0].
-   */
-  bool executeCall(llvm::Function *function, llvm::Instruction *i,
-                   uint64_t *args);
-  void *resolveSymbol(const std::string &name);
+    /* Call the given function using the parameter passing convention of
+     * ci with arguments in args[1], args[2], ... and writing the result
+     * into args[0].
+     */
+    bool executeCall(llvm::Function *function, llvm::Instruction *i,
+                     uint64_t *args);
+    void *resolveSymbol(const std::string &name);
 
-  int getLastErrno();
-  void setLastErrno(int newErrno);
+    int getLastErrno();
+    void setLastErrno(int newErrno);
 };
 }
 

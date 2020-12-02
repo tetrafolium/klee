@@ -13,24 +13,24 @@
 #include "Expr.h"
 
 namespace klee {
-  /// ExprBuilder - Base expression builder class.
-  class ExprBuilder {
-  protected:
+/// ExprBuilder - Base expression builder class.
+class ExprBuilder {
+protected:
     ExprBuilder();
 
-  public:
+public:
     virtual ~ExprBuilder();
 
     // Expressions
 
     virtual ref<Expr> Constant(const llvm::APInt &Value) = 0;
     virtual ref<Expr> NotOptimized(const ref<Expr> &Index) = 0;
-    virtual ref<Expr> Read(const UpdateList &Updates, 
+    virtual ref<Expr> Read(const UpdateList &Updates,
                            const ref<Expr> &Index) = 0;
     virtual ref<Expr> Select(const ref<Expr> &Cond,
                              const ref<Expr> &LHS, const ref<Expr> &RHS) = 0;
     virtual ref<Expr> Concat(const ref<Expr> &LHS, const ref<Expr> &RHS) = 0;
-    virtual ref<Expr> Extract(const ref<Expr> &LHS, 
+    virtual ref<Expr> Extract(const ref<Expr> &LHS,
                               unsigned Offset, Expr::Width W) = 0;
     virtual ref<Expr> ZExt(const ref<Expr> &LHS, Expr::Width W) = 0;
     virtual ref<Expr> SExt(const ref<Expr> &LHS, Expr::Width W) = 0;
@@ -61,31 +61,35 @@ namespace klee {
 
     // Utility functions
 
-    ref<Expr> False() { return ConstantExpr::alloc(0, Expr::Bool); }
+    ref<Expr> False() {
+        return ConstantExpr::alloc(0, Expr::Bool);
+    }
 
-    ref<Expr> True() { return ConstantExpr::alloc(1, Expr::Bool); }
+    ref<Expr> True() {
+        return ConstantExpr::alloc(1, Expr::Bool);
+    }
 
     ref<Expr> Constant(uint64_t Value, Expr::Width W) {
-      return Constant(llvm::APInt(W, Value));
+        return Constant(llvm::APInt(W, Value));
     }
-  };
+};
 
-  /// createDefaultExprBuilder - Create an expression builder which does no
-  /// folding.
-  ExprBuilder *createDefaultExprBuilder();
+/// createDefaultExprBuilder - Create an expression builder which does no
+/// folding.
+ExprBuilder *createDefaultExprBuilder();
 
-  /// createConstantFoldingExprBuilder - Create an expression builder which
-  /// folds constant expressions.
-  ///
-  /// Base - The base builder to use when constructing expressions.
-  ExprBuilder *createConstantFoldingExprBuilder(ExprBuilder *Base);
+/// createConstantFoldingExprBuilder - Create an expression builder which
+/// folds constant expressions.
+///
+/// Base - The base builder to use when constructing expressions.
+ExprBuilder *createConstantFoldingExprBuilder(ExprBuilder *Base);
 
-  /// createSimplifyingExprBuilder - Create an expression builder which attemps
-  /// to fold redundant expressions and normalize expressions for improved
-  /// caching.
-  ///
-  /// Base - The base builder to use when constructing expressions.
-  ExprBuilder *createSimplifyingExprBuilder(ExprBuilder *Base);
+/// createSimplifyingExprBuilder - Create an expression builder which attemps
+/// to fold redundant expressions and normalize expressions for improved
+/// caching.
+///
+/// Base - The base builder to use when constructing expressions.
+ExprBuilder *createSimplifyingExprBuilder(ExprBuilder *Base);
 }
 
 #endif /* KLEE_EXPRBUILDER_H */

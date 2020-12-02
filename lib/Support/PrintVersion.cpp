@@ -22,21 +22,21 @@ void klee::printVersion()
 #endif
 {
 #if LLVM_VERSION_CODE < LLVM_VERSION(6, 0)
-  llvm::raw_ostream &OS = llvm::outs();
+    llvm::raw_ostream &OS = llvm::outs();
 #endif
 
-  OS << PACKAGE_STRING " (" PACKAGE_URL ")\n";
+    OS << PACKAGE_STRING " (" PACKAGE_URL ")\n";
 #ifdef KLEE_ENABLE_TIMESTAMP
-  OS << "  Built " __DATE__ " (" __TIME__ ")\n";
+    OS << "  Built " __DATE__ " (" __TIME__ ")\n";
 #endif
-  OS << "  Build mode: " << KLEE_BUILD_MODE "\n";
-  OS << "  Build revision: ";
+    OS << "  Build mode: " << KLEE_BUILD_MODE "\n";
+    OS << "  Build revision: ";
 #ifdef KLEE_BUILD_REVISION
-  OS << KLEE_BUILD_REVISION "\n";
+    OS << KLEE_BUILD_REVISION "\n";
 #else
-  OS << "unknown\n";
+    OS << "unknown\n";
 #endif
-  // Show LLVM version information
-  OS << "\n";
-  llvm::cl::PrintVersionMessage();
+    // Show LLVM version information
+    OS << "\n";
+    llvm::cl::PrintVersionMessage();
 }

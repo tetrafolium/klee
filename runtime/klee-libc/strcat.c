@@ -37,11 +37,11 @@
 #undef strcat
 
 char * strcat(char * s, const char * append) {
-	char *save = s;
+    char *save = s;
 
-	for (; *s; ++s)
-		;
-	while ((*s++ = *append++))
-		;
-	return(save);
+    for (; *s; ++s)
+        ;
+    while ((*s++ = *append++))
+        ;
+    return(save);
 }

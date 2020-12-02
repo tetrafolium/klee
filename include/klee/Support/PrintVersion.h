@@ -16,9 +16,9 @@
 
 namespace klee {
 #if LLVM_VERSION_CODE >= LLVM_VERSION(6, 0)
-  void printVersion(llvm::raw_ostream &OS);
+void printVersion(llvm::raw_ostream &OS);
 #else
-  void printVersion();
+void printVersion();
 #endif
 }
 

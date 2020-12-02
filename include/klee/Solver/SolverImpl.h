@@ -16,18 +16,18 @@
 #include <vector>
 
 namespace klee {
-  class Array;
-  class ExecutionState;
-  class Expr;
-  struct Query;
+class Array;
+class ExecutionState;
+class Expr;
+struct Query;
 
-  /// SolverImpl - Abstract base clase for solver implementations.
-  class SolverImpl {
+/// SolverImpl - Abstract base clase for solver implementations.
+class SolverImpl {
     // DO NOT IMPLEMENT.
     SolverImpl(const SolverImpl&);
     void operator=(const SolverImpl&);
-    
-  public:
+
+public:
     SolverImpl() {}
     virtual ~SolverImpl();
 
@@ -38,7 +38,8 @@ namespace klee {
                            SOLVER_RUN_STATUS_FORK_FAILED,
                            SOLVER_RUN_STATUS_INTERRUPTED,
                            SOLVER_RUN_STATUS_UNEXPECTED_EXIT_CODE,
-                           SOLVER_RUN_STATUS_WAITPID_FAILED };
+                           SOLVER_RUN_STATUS_WAITPID_FAILED
+                         };
 
     /// computeValidity - Compute a full validity result for the
     /// query.
@@ -61,7 +62,7 @@ namespace klee {
     ///
     /// \return True on success
     virtual bool computeValidity(const Query& query, Solver::Validity &result);
-    
+
     /// computeTruth - Determine whether the given query expression is provably true
     /// given the constraints.
     ///
@@ -85,15 +86,15 @@ namespace klee {
     ///
     /// \return True on success
     virtual bool computeValue(const Query& query, ref<Expr> &result) = 0;
-    
+
     /// \sa Solver::getInitialValues()
     virtual bool computeInitialValues(const Query& query,
-                                      const std::vector<const Array*> 
-                                        &objects,
-                                      std::vector< std::vector<unsigned char> > 
-                                        &values,
+                                      const std::vector<const Array*>
+                                      &objects,
+                                      std::vector< std::vector<unsigned char> >
+                                      &values,
                                       bool &hasSolution) = 0;
-    
+
     /// getOperationStatusCode - get the status of the last solver operation
     virtual SolverRunStatus getOperationStatusCode() = 0;
 

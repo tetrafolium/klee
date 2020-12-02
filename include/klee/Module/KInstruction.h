@@ -19,19 +19,19 @@
 #include <vector>
 
 namespace llvm {
-  class Instruction;
+class Instruction;
 }
 
 namespace klee {
-  class Executor;
-  struct InstructionInfo;
-  class KModule;
+class Executor;
+struct InstructionInfo;
+class KModule;
 
 
-  /// KInstruction - Intermediate instruction representation used
-  /// during execution.
-  struct KInstruction {
-    llvm::Instruction *inst;    
+/// KInstruction - Intermediate instruction representation used
+/// during execution.
+struct KInstruction {
+    llvm::Instruction *inst;
     const InstructionInfo *info;
 
     /// Value numbers for each operand. -1 is an invalid value,
@@ -42,13 +42,13 @@ namespace klee {
     /// Destination register index.
     unsigned dest;
 
-  public:
+public:
     virtual ~KInstruction();
     std::string getSourceLocation() const;
 
-  };
+};
 
-  struct KGEPInstruction : KInstruction {
+struct KGEPInstruction : KInstruction {
     /// indices - The list of variable sized adjustments to add to the pointer
     /// operand to execute the instruction. The first element is the operand
     /// index into the GetElementPtr instruction, and the second element is the
@@ -58,7 +58,7 @@ namespace klee {
     /// offset - A constant offset to add to the pointer operand to execute the
     /// instruction.
     uint64_t offset;
-  };
+};
 }
 
 #endif /* KLEE_KINSTRUCTION_H */

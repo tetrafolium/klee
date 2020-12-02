@@ -7,42 +7,42 @@
 //
 //===----------------------------------------------------------------------===//
 
-/** 
+/**
  * @file MergeHandler.h
  * @brief Implementation of the region based merging
  *
  * ## Basic usage:
- * 
+ *
  * @code{.cpp}
  * klee_open_merge();
- * 
- * code containing branches etc. 
- * 
+ *
+ * code containing branches etc.
+ *
  * klee_close_merge();
  * @endcode
- * 
+ *
  * Will lead to all states that forked from the state that executed the
  * klee_open_merge() being merged in the klee_close_merge(). This allows for
  * fine-grained regions to be specified for merging.
- * 
+ *
  * # Implementation Structure
- * 
+ *
  * The main part of the new functionality is implemented in the class
  * klee::MergeHandler. The Special Function Handler generates an instance of
  * this class every time a state runs into a klee_open_merge() call.
- * 
+ *
  * This instance is appended to a `std::vector<klee::ref<klee::MergeHandler>>`
  * in the ExecutionState that passed the merge open point. This stack is also
  * copied during forks. We use a stack instead of a single instance to support
  * nested merge regions.
- * 
+ *
  * Once a state runs into a `klee_close_merge()`, the Special Function Handler
  * notifies the top klee::MergeHandler in the state's stack, pauses the state
  * from scheduling, and tries to merge it with all other states that already
  * arrived at the same close merge point. This top instance is then popped from
  * the stack, resulting in a decrease of the ref count of the
  * klee::MergeHandler.
- * 
+ *
  * Since the only references to this MergeHandler are in the stacks of
  * the ExecutionStates currently in the merging region, once the ref count
  * reaches zero, every state which ran into the same `klee_open_merge()` is now
@@ -91,66 +91,66 @@ extern llvm::cl::opt<bool> DebugLogIncompleteMerge;
 class Executor;
 class ExecutionState;
 
-/// @brief Represents one `klee_open_merge()` call. 
+/// @brief Represents one `klee_open_merge()` call.
 /// Handles merging of states that branched from it
 class MergeHandler {
 private:
-  Executor *executor;
+    Executor *executor;
 
-  /// @brief The instruction count when the state ran into the klee_open_merge
-  uint64_t openInstruction;
+    /// @brief The instruction count when the state ran into the klee_open_merge
+    uint64_t openInstruction;
 
-  /// @brief The average number of instructions between the open and close merge of each
-  /// state that has finished so far
-  double closedMean;
+    /// @brief The average number of instructions between the open and close merge of each
+    /// state that has finished so far
+    double closedMean;
 
-  /// @brief Number of states that are tracked by this MergeHandler, that ran
-  /// into a relevant klee_close_merge
-  unsigned closedStateCount;
+    /// @brief Number of states that are tracked by this MergeHandler, that ran
+    /// into a relevant klee_close_merge
+    unsigned closedStateCount;
 
-  /// @brief Get distance of state from the openInstruction
-  unsigned getInstructionDistance(ExecutionState *es);
+    /// @brief Get distance of state from the openInstruction
+    unsigned getInstructionDistance(ExecutionState *es);
 
-  /// @brief States that ran through the klee_open_merge, but not yet into a
-  /// corresponding klee_close_merge
-  std::vector<ExecutionState *> openStates;
+    /// @brief States that ran through the klee_open_merge, but not yet into a
+    /// corresponding klee_close_merge
+    std::vector<ExecutionState *> openStates;
 
-  /// @brief Mapping the different 'klee_close_merge' calls to the states that ran into
-  /// them
-  std::map<llvm::Instruction *, std::vector<ExecutionState *> >
-      reachedCloseMerge;
+    /// @brief Mapping the different 'klee_close_merge' calls to the states that ran into
+    /// them
+    std::map<llvm::Instruction *, std::vector<ExecutionState *> >
+    reachedCloseMerge;
 
 public:
 
-  /// @brief Called when a state runs into a 'klee_close_merge()' call
-  void addClosedState(ExecutionState *es, llvm::Instruction *mp);
+    /// @brief Called when a state runs into a 'klee_close_merge()' call
+    void addClosedState(ExecutionState *es, llvm::Instruction *mp);
 
-  /// @brief Return state that should be prioritized to complete this merge
-  ExecutionState *getPrioritizeState();
+    /// @brief Return state that should be prioritized to complete this merge
+    ExecutionState *getPrioritizeState();
 
-  /// @brief Add state to the 'openStates' vector
-  void addOpenState(ExecutionState *es);
+    /// @brief Add state to the 'openStates' vector
+    void addOpenState(ExecutionState *es);
 
-  /// @brief Remove state from the 'openStates' vector
-  void removeOpenState(ExecutionState *es);
+    /// @brief Remove state from the 'openStates' vector
+    void removeOpenState(ExecutionState *es);
 
-  /// @brief True, if any states have run into 'klee_close_merge()' and have
-  /// not been released yet
-  bool hasMergedStates();
-  
-  /// @brief Immediately release the merged states that have run into a
-  /// 'klee_merge_close()'
-  void releaseStates();
+    /// @brief True, if any states have run into 'klee_close_merge()' and have
+    /// not been released yet
+    bool hasMergedStates();
 
-  // Return the mean time it takes for a state to get from klee_open_merge to
-  // klee_close_merge
-  double getMean();
+    /// @brief Immediately release the merged states that have run into a
+    /// 'klee_merge_close()'
+    void releaseStates();
 
-  /// @brief Required by klee::ref-managed objects
-  class ReferenceCounter _refCount;
+    // Return the mean time it takes for a state to get from klee_open_merge to
+    // klee_close_merge
+    double getMean();
 
-  MergeHandler(Executor *_executor, ExecutionState *es);
-  ~MergeHandler();
+    /// @brief Required by klee::ref-managed objects
+    class ReferenceCounter _refCount;
+
+    MergeHandler(Executor *_executor, ExecutionState *es);
+    ~MergeHandler();
 };
 }
 

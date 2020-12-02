@@ -15,34 +15,34 @@
 #include "llvm/ADT/PointerIntPair.h"
 
 namespace klee {
-  class ExecutionState;
-  class PTreeNode;
-  /* PTreeNodePtr is used by the Random Path Searcher object to efficiently
-  record which PTreeNode belongs to it. PTree is a global structure that
-  captures all  states, whereas a Random Path Searcher might only care about
-  a subset. The integer part of PTreeNodePtr is a bitmask (a "tag") of which
-  Random Path Searchers PTreeNode belongs to. */
-  constexpr int PtrBitCount = 3;
-  using PTreeNodePtr = llvm::PointerIntPair<PTreeNode *, PtrBitCount, uint8_t>;
+class ExecutionState;
+class PTreeNode;
+/* PTreeNodePtr is used by the Random Path Searcher object to efficiently
+record which PTreeNode belongs to it. PTree is a global structure that
+captures all  states, whereas a Random Path Searcher might only care about
+a subset. The integer part of PTreeNodePtr is a bitmask (a "tag") of which
+Random Path Searchers PTreeNode belongs to. */
+constexpr int PtrBitCount = 3;
+using PTreeNodePtr = llvm::PointerIntPair<PTreeNode *, PtrBitCount, uint8_t>;
 
-  class PTreeNode {
-  public:
+class PTreeNode {
+public:
     PTreeNode *parent = nullptr;
 
-    PTreeNodePtr left; 
+    PTreeNodePtr left;
     PTreeNodePtr right;
     ExecutionState *state = nullptr;
 
     PTreeNode(const PTreeNode&) = delete;
     PTreeNode(PTreeNode *parent, ExecutionState *state);
     ~PTreeNode() = default;
-  };
+};
 
-  class PTree {
+class PTree {
     // Number of registered ID
     int registeredIds = 0;
 
-  public:
+public:
     PTreeNodePtr root;
     explicit PTree(ExecutionState *initialState);
     ~PTree() = default;
@@ -52,14 +52,14 @@ namespace klee {
     static void remove(PTreeNode *node);
     void dump(llvm::raw_ostream &os);
     std::uint8_t getNextId() {
-      std::uint8_t id = 1 << registeredIds++;
-      if (registeredIds > PtrBitCount) {
-        klee_error("PTree cannot support more than %d RandomPathSearchers",
-                   PtrBitCount);
-      }
-      return id;
+        std::uint8_t id = 1 << registeredIds++;
+        if (registeredIds > PtrBitCount) {
+            klee_error("PTree cannot support more than %d RandomPathSearchers",
+                       PtrBitCount);
+        }
+        return id;
     }
-  };
+};
 }
 
 #endif /* KLEE_PTREE_H */

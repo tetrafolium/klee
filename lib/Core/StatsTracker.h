@@ -18,21 +18,21 @@
 #include <sqlite3.h>
 
 namespace llvm {
-  class BranchInst;
-  class Function;
-  class Instruction;
-  class raw_fd_ostream;
+class BranchInst;
+class Function;
+class Instruction;
+class raw_fd_ostream;
 }
 
 namespace klee {
-  class ExecutionState;
-  class Executor;
-  class InstructionInfoTable;
-  class InterpreterHandler;
-  struct KInstruction;
-  struct StackFrame;
+class ExecutionState;
+class Executor;
+class InstructionInfoTable;
+class InterpreterHandler;
+struct KInstruction;
+struct StackFrame;
 
-  class StatsTracker {
+class StatsTracker {
     friend class WriteStatsTimer;
     friend class WriteIStatsTimer;
 
@@ -55,17 +55,17 @@ namespace klee {
 
     bool updateMinDistToUncovered;
 
-  public:
+public:
     static bool useStatistics();
     static bool useIStats();
 
-  private:
+private:
     void updateStateStatistics(uint64_t addend);
     void writeStatsHeader();
     void writeStatsLine();
     void writeIStats();
 
-  public:
+public:
     StatsTracker(Executor &_executor, std::string _objectFilename,
                  bool _updateMinDistToUncovered);
     ~StatsTracker();
@@ -98,10 +98,10 @@ namespace klee {
     time::Span elapsed();
 
     void computeReachableUncovered();
-  };
+};
 
-  uint64_t computeMinDistToUncovered(const KInstruction *ki,
-                                     uint64_t minDistAtRA);
+uint64_t computeMinDistToUncovered(const KInstruction *ki,
+                                   uint64_t minDistAtRA);
 
 }
 

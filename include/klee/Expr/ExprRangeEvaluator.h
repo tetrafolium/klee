@@ -21,10 +21,10 @@ public:
   ValueType(); // empty range
   ValueType(uint64_t value);
   ValueType(uint64_t min, uint64_t max);
-  
+
   bool mustEqual(const uint64_t b);
   bool mustEqual(const ValueType &b);
-  bool mayEqual(const uint64_t b);  
+  bool mayEqual(const uint64_t b);
   bool mayEqual(const ValueType &b);
 
   bool isFullRange(unsigned width);
@@ -55,229 +55,229 @@ public:
 template<class T>
 class ExprRangeEvaluator {
 protected:
-  /// getInitialReadRange - Return a range for the initial value of the given
-  /// array (which may be constant), for the given range of indices.
-  virtual T getInitialReadRange(const Array &os, T index) = 0;
+    /// getInitialReadRange - Return a range for the initial value of the given
+    /// array (which may be constant), for the given range of indices.
+    virtual T getInitialReadRange(const Array &os, T index) = 0;
 
-  T evalRead(const UpdateList &ul, T index);
+    T evalRead(const UpdateList &ul, T index);
 
 public:
-  ExprRangeEvaluator() {}
-  virtual ~ExprRangeEvaluator() {}
+    ExprRangeEvaluator() {}
+    virtual ~ExprRangeEvaluator() {}
 
-  T evaluate(const ref<Expr> &e);
+    T evaluate(const ref<Expr> &e);
 };
 
 template<class T>
 T ExprRangeEvaluator<T>::evalRead(const UpdateList &ul,
                                   T index) {
-  T res;
+    T res;
 
-  for (const UpdateNode *un = ul.head.get(); un; un = un->next.get()) {
-    T ui = evaluate(un->index);
+    for (const UpdateNode *un = ul.head.get(); un; un = un->next.get()) {
+        T ui = evaluate(un->index);
 
-    if (ui.mustEqual(index)) {
-      return res.set_union(evaluate(un->value));
-    } else if (ui.mayEqual(index)) {
-      res = res.set_union(evaluate(un->value));
-      if (res.isFullRange(8)) {
-        return res;
-      } 
+        if (ui.mustEqual(index)) {
+            return res.set_union(evaluate(un->value));
+        } else if (ui.mayEqual(index)) {
+            res = res.set_union(evaluate(un->value));
+            if (res.isFullRange(8)) {
+                return res;
+            }
+        }
     }
-  }
 
-  return res.set_union(getInitialReadRange(*ul.root, index));
+    return res.set_union(getInitialReadRange(*ul.root, index));
 }
 
 template<class T>
 T ExprRangeEvaluator<T>::evaluate(const ref<Expr> &e) {
-  switch (e->getKind()) {
-  case Expr::Constant:
-    return T(cast<ConstantExpr>(e));
+    switch (e->getKind()) {
+    case Expr::Constant:
+        return T(cast<ConstantExpr>(e));
 
-  case Expr::NotOptimized: 
-    break;
+    case Expr::NotOptimized:
+        break;
 
-  case Expr::Read: {
-    const ReadExpr *re = cast<ReadExpr>(e);
-    T index = evaluate(re->index);
+    case Expr::Read: {
+        const ReadExpr *re = cast<ReadExpr>(e);
+        T index = evaluate(re->index);
 
-    assert(re->updates.root && re->getWidth() == re->updates.root->range && "unexpected multibyte read");
+        assert(re->updates.root && re->getWidth() == re->updates.root->range && "unexpected multibyte read");
 
-    return evalRead(re->updates, index);
-  }
-
-  case Expr::Select: {
-    const SelectExpr *se = cast<SelectExpr>(e);
-    T cond = evaluate(se->cond);
-      
-    if (cond.mustEqual(1)) {
-      return evaluate(se->trueExpr);
-    } else if (cond.mustEqual(0)) {
-      return evaluate(se->falseExpr);
-    } else {
-      return evaluate(se->trueExpr).set_union(evaluate(se->falseExpr));
+        return evalRead(re->updates, index);
     }
-  }
+
+    case Expr::Select: {
+        const SelectExpr *se = cast<SelectExpr>(e);
+        T cond = evaluate(se->cond);
+
+        if (cond.mustEqual(1)) {
+            return evaluate(se->trueExpr);
+        } else if (cond.mustEqual(0)) {
+            return evaluate(se->falseExpr);
+        } else {
+            return evaluate(se->trueExpr).set_union(evaluate(se->falseExpr));
+        }
+    }
 
     // XXX these should be unrolled to ensure nice inline
-  case Expr::Concat: {
-    const Expr *ep = e.get();
-    T res(0);
-    for (unsigned i=0; i<ep->getNumKids(); i++)
-      res = res.concat(evaluate(ep->getKid(i)),8);
-    return res;
-  }
+    case Expr::Concat: {
+        const Expr *ep = e.get();
+        T res(0);
+        for (unsigned i=0; i<ep->getNumKids(); i++)
+            res = res.concat(evaluate(ep->getKid(i)),8);
+        return res;
+    }
 
     // Arithmetic
 
-  case Expr::Add: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).add(evaluate(be->right), width);
-  }
-  case Expr::Sub: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).sub(evaluate(be->right), width);
-  }
-  case Expr::Mul: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).mul(evaluate(be->right), width);
-  }
-  case Expr::UDiv: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).udiv(evaluate(be->right), width);
-  }
-  case Expr::SDiv: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).sdiv(evaluate(be->right), width);
-  }
-  case Expr::URem: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).urem(evaluate(be->right), width);
-  }
-  case Expr::SRem: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    unsigned width = be->left->getWidth();
-    return evaluate(be->left).srem(evaluate(be->right), width);
-  }
+    case Expr::Add: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).add(evaluate(be->right), width);
+    }
+    case Expr::Sub: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).sub(evaluate(be->right), width);
+    }
+    case Expr::Mul: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).mul(evaluate(be->right), width);
+    }
+    case Expr::UDiv: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).udiv(evaluate(be->right), width);
+    }
+    case Expr::SDiv: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).sdiv(evaluate(be->right), width);
+    }
+    case Expr::URem: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).urem(evaluate(be->right), width);
+    }
+    case Expr::SRem: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        unsigned width = be->left->getWidth();
+        return evaluate(be->left).srem(evaluate(be->right), width);
+    }
 
     // Binary
 
-  case Expr::And: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    return evaluate(be->left).binaryAnd(evaluate(be->right));
-  }
-  case Expr::Or: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    return evaluate(be->left).binaryOr(evaluate(be->right));
-  }
-  case Expr::Xor: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    return evaluate(be->left).binaryXor(evaluate(be->right));
-  }
-  case Expr::Shl: {
-    //    BinaryExpr *be = cast<BinaryExpr>(e);
-    //    unsigned width = be->left->getWidth();
-    //    return evaluate(be->left).shl(evaluate(be->right), width);
-    break;
-  }
-  case Expr::LShr: {
-    //    BinaryExpr *be = cast<BinaryExpr>(e);
-    //    unsigned width = be->left->getWidth();
-    //    return evaluate(be->left).lshr(evaluate(be->right), width);
-    break;
-  }
-  case Expr::AShr: {
-    //    BinaryExpr *be = cast<BinaryExpr>(e);
-    //    unsigned width = be->left->getWidth();
-    //    return evaluate(be->left).ashr(evaluate(be->right), width);
-    break;
-  }
+    case Expr::And: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        return evaluate(be->left).binaryAnd(evaluate(be->right));
+    }
+    case Expr::Or: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        return evaluate(be->left).binaryOr(evaluate(be->right));
+    }
+    case Expr::Xor: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        return evaluate(be->left).binaryXor(evaluate(be->right));
+    }
+    case Expr::Shl: {
+        //    BinaryExpr *be = cast<BinaryExpr>(e);
+        //    unsigned width = be->left->getWidth();
+        //    return evaluate(be->left).shl(evaluate(be->right), width);
+        break;
+    }
+    case Expr::LShr: {
+        //    BinaryExpr *be = cast<BinaryExpr>(e);
+        //    unsigned width = be->left->getWidth();
+        //    return evaluate(be->left).lshr(evaluate(be->right), width);
+        break;
+    }
+    case Expr::AShr: {
+        //    BinaryExpr *be = cast<BinaryExpr>(e);
+        //    unsigned width = be->left->getWidth();
+        //    return evaluate(be->left).ashr(evaluate(be->right), width);
+        break;
+    }
 
     // Comparison
 
-  case Expr::Eq: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    T left = evaluate(be->left);
-    T right = evaluate(be->right);
-      
-    if (left.mustEqual(right)) {
-      return T(1);
-    } else if (!left.mayEqual(right)) {
-      return T(0);
-    }
-    break;
-  }
+    case Expr::Eq: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        T left = evaluate(be->left);
+        T right = evaluate(be->right);
 
-  case Expr::Ult: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    T left = evaluate(be->left);
-    T right = evaluate(be->right);
-      
-    if (left.max() < right.min()) {
-      return T(1);
-    } else if (left.min() >= right.max()) {
-      return T(0);
+        if (left.mustEqual(right)) {
+            return T(1);
+        } else if (!left.mayEqual(right)) {
+            return T(0);
+        }
+        break;
     }
-    break;
-  }
-  case Expr::Ule: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    T left = evaluate(be->left);
-    T right = evaluate(be->right);
-      
-    if (left.max() <= right.min()) {
-      return T(1);
-    } else if (left.min() > right.max()) {
-      return T(0);
+
+    case Expr::Ult: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        T left = evaluate(be->left);
+        T right = evaluate(be->right);
+
+        if (left.max() < right.min()) {
+            return T(1);
+        } else if (left.min() >= right.max()) {
+            return T(0);
+        }
+        break;
     }
-    break;
-  }
-  case Expr::Slt: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    T left = evaluate(be->left);
-    T right = evaluate(be->right);
-    unsigned bits = be->left->getWidth();
+    case Expr::Ule: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        T left = evaluate(be->left);
+        T right = evaluate(be->right);
 
-    if (left.maxSigned(bits) < right.minSigned(bits)) {
-      return T(1);
-    } else if (left.minSigned(bits) >= right.maxSigned(bits)) {
-      return T(0);
+        if (left.max() <= right.min()) {
+            return T(1);
+        } else if (left.min() > right.max()) {
+            return T(0);
+        }
+        break;
     }
-    break;
-  }
-  case Expr::Sle: {
-    const BinaryExpr *be = cast<BinaryExpr>(e);
-    T left = evaluate(be->left);
-    T right = evaluate(be->right);
-    unsigned bits = be->left->getWidth();
-      
-    if (left.maxSigned(bits) <= right.minSigned(bits)) {
-      return T(1);
-    } else if (left.minSigned(bits) > right.maxSigned(bits)) {
-      return T(0);
+    case Expr::Slt: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        T left = evaluate(be->left);
+        T right = evaluate(be->right);
+        unsigned bits = be->left->getWidth();
+
+        if (left.maxSigned(bits) < right.minSigned(bits)) {
+            return T(1);
+        } else if (left.minSigned(bits) >= right.maxSigned(bits)) {
+            return T(0);
+        }
+        break;
     }
-    break;
-  }
+    case Expr::Sle: {
+        const BinaryExpr *be = cast<BinaryExpr>(e);
+        T left = evaluate(be->left);
+        T right = evaluate(be->right);
+        unsigned bits = be->left->getWidth();
 
-  case Expr::Ne:
-  case Expr::Ugt:
-  case Expr::Uge:
-  case Expr::Sgt:
-  case Expr::Sge:
-    assert(0 && "invalid expressions (uncanonicalized)");
+        if (left.maxSigned(bits) <= right.minSigned(bits)) {
+            return T(1);
+        } else if (left.minSigned(bits) > right.maxSigned(bits)) {
+            return T(0);
+        }
+        break;
+    }
 
-  default:
-    break;
-  }
+    case Expr::Ne:
+    case Expr::Ugt:
+    case Expr::Uge:
+    case Expr::Sgt:
+    case Expr::Sge:
+        assert(0 && "invalid expressions (uncanonicalized)");
 
-  return T(0, bits64::maxValueOfNBits(e->getWidth()));
+    default:
+        break;
+    }
+
+    return T(0, bits64::maxValueOfNBits(e->getWidth()));
 }
 
 }

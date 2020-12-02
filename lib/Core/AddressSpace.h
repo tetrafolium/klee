@@ -17,26 +17,26 @@
 #include "klee/System/Time.h"
 
 namespace klee {
-  class ExecutionState;
-  class MemoryObject;
-  class ObjectState;
-  class TimingSolver;
+class ExecutionState;
+class MemoryObject;
+class ObjectState;
+class TimingSolver;
 
-  template<class T> class ref;
+template<class T> class ref;
 
-  typedef std::pair<const MemoryObject*, const ObjectState*> ObjectPair;
-  typedef std::vector<ObjectPair> ResolutionList;  
+typedef std::pair<const MemoryObject*, const ObjectState*> ObjectPair;
+typedef std::vector<ObjectPair> ResolutionList;
 
-  /// Function object ordering MemoryObject's by address.
-  struct MemoryObjectLT {
+/// Function object ordering MemoryObject's by address.
+struct MemoryObjectLT {
     bool operator()(const MemoryObject *a, const MemoryObject *b) const;
-  };
+};
 
-  typedef ImmutableMap<const MemoryObject *, ref<ObjectState>, MemoryObjectLT>
-      MemoryMap;
+typedef ImmutableMap<const MemoryObject *, ref<ObjectState>, MemoryObjectLT>
+MemoryMap;
 
-  class AddressSpace {
-  private:
+class AddressSpace {
+private:
     /// Epoch counter used to control ownership of objects.
     mutable unsigned cowKey;
 
@@ -54,7 +54,7 @@ namespace klee {
                              ref<Expr> p, const ObjectPair &op,
                              ResolutionList &rl, unsigned maxResolutions) const;
 
-  public:
+public:
     /// The MemoryObject -> ObjectState map that constitutes the
     /// address space.
     ///
@@ -70,19 +70,19 @@ namespace klee {
 
     /// Resolve address to an ObjectPair in result.
     /// \return true iff an object was found.
-    bool resolveOne(const ref<ConstantExpr> &address, 
+    bool resolveOne(const ref<ConstantExpr> &address,
                     ObjectPair &result) const;
 
     /// Resolve address to an ObjectPair in result.
     ///
     /// \param state The state this address space is part of.
-    /// \param solver A solver used to determine possible 
+    /// \param solver A solver used to determine possible
     ///               locations of the \a address.
     /// \param address The address to search for.
-    /// \param[out] result An ObjectPair this address can resolve to 
+    /// \param[out] result An ObjectPair this address can resolve to
     ///               (when returning true).
     /// \return true iff an object was found at \a address.
-    bool resolveOne(ExecutionState &state, 
+    bool resolveOne(ExecutionState &state,
                     TimingSolver *solver,
                     ref<Expr> address,
                     ObjectPair &result,
@@ -97,7 +97,7 @@ namespace klee {
     bool resolve(ExecutionState &state,
                  TimingSolver *solver,
                  ref<Expr> p,
-                 ResolutionList &rl, 
+                 ResolutionList &rl,
                  unsigned maxResolutions=0,
                  time::Span timeout=time::Span()) const;
 
@@ -134,7 +134,7 @@ namespace klee {
     /// potentially copied) if the memory values are different from
     /// the current concrete values.
     ///
-    /// \retval true The copy succeeded. 
+    /// \retval true The copy succeeded.
     /// \retval false The copy failed because a read-only object was modified.
     bool copyInConcretes();
 
@@ -146,7 +146,7 @@ namespace klee {
     /// @return
     bool copyInConcrete(const MemoryObject *mo, const ObjectState *os,
                         uint64_t src_address);
-  };
+};
 } // End klee namespace
 
 #endif /* KLEE_ADDRESSSPACE_H */
