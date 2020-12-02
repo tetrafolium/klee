@@ -17,6 +17,8 @@ inspecode:
     thresholds: { num-issues: 14 }
 
   cppcheck:
+    machine:
+      cpu: 1.5
     thresholds: { num-issues: 8 }
 
   cpplint:
